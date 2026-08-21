@@ -29,6 +29,10 @@ if (isProduction) {
   app.set('trust proxy', 1);
 }
 
+// Ensure data directories exist before any SQLite store or DB is initialised.
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
 // Public site files remain inside frontend/, while dynamic uploads are served from /uploads.
 app.use(express.static(frontendDir));
 app.use('/uploads', express.static(path.join(dataDir, 'uploads')));
@@ -57,10 +61,7 @@ app.use(session({
 }));
 
 // Runtime data lives outside the tracked frontend folder to make deploy persistence easier.
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// (directories are created early, before SQLite stores are initialised)
 
 // Blog images are stored in the persistent uploads directory.
 const storage = multer.diskStorage({
