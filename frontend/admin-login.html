@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* small overrides so login page matches site look but hides nav */
+    header .nav-links { display: none; }
+    .login-wrapper { max-width:480px;margin:60px auto;padding:24px;background:var(--bg-card);border-radius:8px; }
+    .loading-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;color:#fff;z-index:3000;display:none; }
+    .loading-overlay .box{background:rgba(0,0,0,0.5);padding:18px;border-radius:8px}
+  </style>
+</head>
+<body data-page="admin-login">
+  <header id="navbar" class="scrolled">
+    <div class="container nav-container">
+        <a href="index.html" class="logo" style="text-decoration: none;">
+            <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+            <h2>CONSTHERME <span>GARAGE</span></h2>
+        </a>
+        <nav class="nav-links">
+            <!-- intentionally empty for login screen -->
+        </nav>
+        <div class="menu-mobile-icon" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Administração do Blog</h1>
+      <p>Gerencie postagens, imagens, categorias e tags aqui.</p>
+    </div>
+  </section>
+
+  <main>
+    <div class="login-wrapper">
+      <h3>Autenticação</h3>
+      <form id="login-form">
+        <div class="input-block">
+          <label>Usuário</label>
+          <input type="text" id="username" required>
+        </div>
+        <div class="input-block">
+          <label>Senha</label>
+          <input type="password" id="password" required>
+        </div>
+        <div style="margin-top:12px;">
+          <button type="submit" class="btn-primary">Entrar</button>
+        </div>
+      </form>
+      <div id="login-msg" style="margin-top:10px;color:red;"></div>
+    </div>
+  </main>
+
+  <div id="loading-overlay" class="loading-overlay"><div class="box"><i class="fas fa-spinner fa-spin"></i> Carregando, aguarde...</div></div>
+
+  <script src="admin-login.js"></script>
+</body>
+</html>

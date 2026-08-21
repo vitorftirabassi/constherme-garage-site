@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constherme Garage - Quem vive evolução, dirige o próximo nível.</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="navbar">
+    <div class="container nav-container">
+        <a href="index.html" class="logo" style="text-decoration: none;">
+            <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+            <h2>CONSTHERME <span>GARAGE</span></h2>
+        </a>
+            <nav class="nav-links">
+                <!-- Repare que agora o link de Estoque aponta para o ARQUIVO, e não para o "#" -->
+                <a href="index.html">Início</a>
+                <a href="estoque.html">Estoque</a>
+                <a href="consignacao.html">Consignação</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="blog.html">Blog</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+            <div class="menu-mobile-icon" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section id="hero">
+        <video autoplay loop muted playsinline class="video-bg">
+            <source src="videos/Video_home.mp4" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+        <div class="hero-content container">
+            <h1>Quem vive evolução, dirige o próximo nível.</h1>
+            <p>Tradição, transparência e veículos de altíssimo padrão em Boituva.</p>
+            <a href="#estoque" class="btn-primary">Ver Estoque Premium</a>
+        </div>
+    </section>
+
+    <section id="estoque" class="py-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>Destaques do Estoque</h2>
+            <p>Veículos selecionados a dedo para você</p>
+        </div>
+        
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper" id="grid-carros">
+                </div>
+            
+            <div class="swiper-pagination"></div>
+            
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+    </section>
+
+    <section id="diferenciais" class="py-5 diferences-section">
+        <div class="container section-title">
+            <h2>Por que escolher a Constherme?</h2>
+            <p>Tranquilidade e segurança em cada quilômetro</p>
+        </div>
+        <div class="container grid-diferenciais">
+            <div class="diferencial-box">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Procedência Garantida</h4>
+                <p>Todos os nossos veículos passam por um rigoroso laudo cautelar aprovado.</p>
+            </div>
+            <div class="diferencial-box">
+                <i class="fas fa-gem"></i>
+                <h4>Estoque Premium</h4>
+                <p>Curadoria impecável com as melhores marcas e modelos do mercado.</p>
+            </div>
+            <div class="diferencial-box">
+                <i class="fas fa-handshake"></i>
+                <h4>Atendimento Exclusivo</h4>
+                <p>Transparência do início ao fim para você realizar o melhor negócio.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE AUTORIDADE (O Novo "Sobre") -->
+    <section id="sobre" class="py-5 authority-section">
+        <div class="container grid-authority">
+            <div class="authority-img-wrapper">
+                <!-- Dica: Use uma foto real da fachada da loja ou do interior premium -->
+                <img src="imagens/fachada-constherme.png" alt="Fachada da Constherme Garage" class="authority-img">
+                <div class="experience-badge">
+                    <span class="badge-number">+200</span>
+                    <span class="badge-text">Veículos<br>Entregues</span>
+                </div>
+            </div>
+            
+            <div class="authority-content">
+                <h4 class="subtitle-highlight">A NOSSA HISTÓRIA</h4>
+                <h2>Não vendemos carros, entregamos <span class="text-primary">segurança</span>.</h2>
+                <p>Nascida da paixão pelo mercado automotivo premium, a Constherme Garage se consolidou em Boituva com uma premissa inegociável: transparência absoluta.</p>
+                <p>Cada veículo em nosso estoque passa por uma curadoria rigorosa, garantindo que o seu próximo nível seja atingido sem surpresas desagradáveis. Não somos apenas uma loja, somos o seu parceiro na realização de um sonho.</p>
+                
+                <ul class="authority-list">
+                    <li><i class="fas fa-check-circle"></i> Estrutura física de alto padrão</li>
+                    <li><i class="fas fa-check-circle"></i> Especialistas em negociação automotiva</li>
+                    <li><i class="fas fa-check-circle"></i> Avaliação justa no seu seminovo</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="depoimentos" class="py-5 testimonials-section">
+        <div class="container section-title">
+            <h2>O que dizem nossos clientes</h2>
+            <p>Experiências reais de quem dirige o próximo nível</p>
+        </div>
+        
+        <div class="container grid-depoimentos">
+            <div class="depoimento-box">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="texto-depoimento">"Consignei meu Argo com a Constherme Garage mesmo morando em outra cidade e todo o processo foi extremamente transparente, ágil e eficiente. Fui muito bem atendida do início ao fim e me senti segura em cada etapa. Recomendo!"</p>
+                <div class="cliente-info">
+                    <strong>Dani Jamelli</strong>
+                    <span>Avaliação no Google • 5 meses atrás</span>
+                </div>
+            </div>
+
+            <div class="depoimento-box">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="texto-depoimento">"Recentemente adquiri meu carro na loja e fiquei muito satisfeita com toda a experiência. Desde o início fui muito bem atendida, com muita atenção, transparência e paciência para esclarecer todas as minhas dúvidas. A equipe demonstrou muito profissionalismo e dedicação durante todo processo. Super recomendo 😊"</p>
+                <div class="cliente-info">
+                    <strong>Aline Rodrigues</strong>
+                    <span>Avaliação no Google • 5 meses atrás</span>
+                </div>
+            </div>
+
+            <div class="depoimento-box">
+                <div class="stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="texto-depoimento">"O atendimento foi excelente, foram muito atenciosos e simpáticos. O carro está impecável e por um bom preço, ficamos muito satisfeitos. Recomendo."</p>
+                <div class="cliente-info">
+                    <strong>Junior Barros</strong>
+                    <span>Avaliação no Google • um mês atrás</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicos" class="cta-section py-5">
+        <div class="container grid-cta">
+            <div class="cta-box">
+                <i class="fas fa-car-side"></i>
+                <h3>Quer vender seu carro?</h3>
+                <p>Compramos seu seminovo com a melhor avaliação de Boituva. Pagamento à vista e transparência total.</p>
+                <a href="consignacao.html" class="btn-outline">Avaliar meu veículo</a>
+            </div>
+            <div class="cta-box">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <h3>Financiamento Fácil</h3>
+                <p>Trabalhamos com os melhores bancos para garantir as menores taxas do mercado.</p>
+                <a href="financiamento.html" class="btn-outline">Simular parcelas</a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contato">
+        <div class="container footer-grid">
+            <div class="footer-info">
+                <h3>Constherme Garage</h3>
+                <p>R. Zélia de Lima Rosa, 709 - Portal Ville Azaléia, Boituva - SP</p>
+                <p><i class="fas fa-phone"></i> (15) 3363-4000</p>
+            </div>
+            <div class="footer-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.633857502661!2d-47.6853!3d-23.2921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDE3JzMxLjYiUyA0N8KwNDEnMDcuMSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Constherme Garage - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/551533634000" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script src="fetch-boom.js"></script>
+</body>
+</html>

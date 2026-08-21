@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Veículo - Constherme Garage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- O CABEÇALHO PERMANECE O MESMO -->
+    <header id="navbar" class="scrolled"> <!-- Adicionei a classe scrolled por padrão para o fundo já ficar escuro nesta página -->
+        <div class="container nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+                <h2>CONSTHERME <span>GARAGE</span></h2>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#hero">Início</a>
+                <a href="estoque.html" style="color: var(--primary-color);">Estoque</a> <!-- Destacado para mostrar onde estamos -->
+                <a href="index.html#servicos">Consignação</a>
+                <a href="index.html#financiamento">Financiamento</a>
+                <a href="index.html#contato">Contato</a>
+            </nav>
+            <div class="menu-mobile-icon" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <main id="detalhes-veiculo-container" class="py-5" style="margin-top: 80px;">
+        <div class="container text-center">
+            <h2>Carregando veículo...</h2>
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Quando a página carregar, executa a função específica desta página
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDetalhesVeiculo();
+        });
+    </script>
+</body>
+</html>

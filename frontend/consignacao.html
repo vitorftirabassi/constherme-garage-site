@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consignação Premium - Constherme Garage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="navbar" class="scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+                <h2>CONSTHERME <span>GARAGE</span></h2>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="estoque.html">Estoque</a>
+                <a href="consignacao.html">Consignação</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="blog.html">Blog</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+            <div class="menu-mobile-icon" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header page-header-consignacao">
+        <div class="container">
+            <h1>Venda seu veículo com segurança</h1>
+            <p>Deixe a negociação com nossos especialistas e maximize seu retorno.</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container layout-consignacao">
+            
+            <div class="form-container">
+                <h3>Solicitar Avaliação</h3>
+                <p class="text-muted mb-4">Preencha os dados abaixo e nossa equipe entrará em contato em até 2 horas úteis.</p>
+                
+                <form id="form-consignacao">
+                    <div class="form-group-duplo">
+                        <div class="input-block">
+                            <label for="nome">Seu Nome</label>
+                            <input type="text" id="nome" placeholder="Ex: João Silva" required>
+                        </div>
+                        <div class="input-block">
+                            <label for="telefone">Telefone / WhatsApp</label>
+                            <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-duplo mt-3">
+                        <div class="input-block">
+                            <label for="consignacao-marca">Marca do Veículo</label>
+                            <select id="consignacao-marca" class="select-padrao" required>
+                                <option value="" disabled selected>Selecione a Marca</option>
+                                <option value="Fiat">Fiat</option>
+                                <option value="Volkswagen">Volkswagen</option>
+                                <option value="BMW">BMW</option>
+                                <option value="Outra">Outra Marca</option>
+                            </select>
+                        </div>
+                     
+                        <div class="input-block custom-dropdown-container">
+                            <label>Modelo e Versão</label>
+                            <input type="hidden" id="consignacao-modelo-hidden" required>
+                            
+                            <div class="custom-select disabled" id="custom-modelo-select">
+                                <div class="select-selected">Escolha a Marca primeiro</div>
+                                <div class="select-items select-hide" id="lista-modelos-dropdown">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group-duplo mt-3">
+                        <div class="input-block" id="container-outro-modelo" style="display: none;">
+                            <label for="consignacao-outro-modelo">Qual é o modelo/versão?</label>
+                            <input type="text" id="consignacao-outro-modelo" placeholder="Ex: Fusca 1500">
+                        </div>
+
+                        <div class="input-block">
+                            <label for="consignacao-ano">Ano (Fabricação/Modelo)</label>
+                            <input type="text" id="consignacao-ano" placeholder="Ex: 2023/2024" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-block mt-3">
+                        <label for="mensagem">Observações adicionais (Opcional)</label>
+                        <textarea id="mensagem" rows="3" placeholder="Quilometragem, estado de conservação, se possui manual e chave reserva..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-full mt-4">Enviar para Avaliação</button>
+                </form>
+            </div>
+
+            <aside class="passos-container">
+                <h3>Por que consignar com a Constherme?</h3>
+                
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-camera"></i></div>
+                    <div class="passo-texto">
+                        <h4>1. Estúdio Fotográfico</h4>
+                        <p>Seu veículo passa por uma sessão de fotos profissional para destacar todos os detalhes no nosso site e portais.</p>
+                    </div>
+                </div>
+
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-bullhorn"></i></div>
+                    <div class="passo-texto">
+                        <h4>2. Exposição Premium</h4>
+                        <p>Estratégia de marketing direcionada para o público alvo correto, garantindo uma venda mais rápida e pelo valor justo.</p>
+                    </div>
+                </div>
+
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-file-signature"></i></div>
+                    <div class="passo-texto">
+                        <h4>3. Burocracia Zero</h4>
+                        <p>Cuidamos de toda a parte documental, laudos cautelares e financiamento para o comprador. Você só assina o recibo.</p>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </section>
+
+    <footer id="contato">
+        </footer>
+
+    <script src="script.js"></script>
+</body>
+<footer id="contato">
+        <div class="container footer-grid">
+            <div class="footer-info">
+                <h3>Constherme Garage</h3>
+                <p>R. Zélia de Lima Rosa, 709 - Portal Ville Azaléia, Boituva - SP</p>
+                <p><i class="fas fa-phone"></i> (15) 3363-4000</p>
+            </div>
+            <div class="footer-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.633857502661!2d-47.6853!3d-23.2921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDE3JzMxLjYiUyA0N8KwNDEnMDcuMSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Constherme Garage - Todos os direitos reservados.</p>
+        </div>
+</footer>
+</html>

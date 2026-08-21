@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque Premium - Constherme Garage</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- O CABEÇALHO PERMANECE O MESMO -->
+    <header id="navbar" class="scrolled"> <!-- Adicionei a classe scrolled por padrão para o fundo já ficar escuro nesta página -->
+        <div class="container nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+                <h2>CONSTHERME <span>GARAGE</span></h2>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="estoque.html">Estoque</a>
+                <a href="consignacao.html">Consignação</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="blog.html">Blog</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+            <div class="menu-mobile-icon" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- HEADER INTERNO DA PÁGINA -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Estoque Premium</h1>
+            <p>Encontre o seu próximo nível</p>
+        </div>
+    </section>
+
+    <!-- CONTEÚDO PRINCIPAL: FILTROS + GRID -->
+    <section class="py-5">
+        <button type="button" class="mobile-filtros-toggle" id="mobile-filtros-toggle" aria-expanded="false" aria-controls="mobile-filtros-panel">
+            <i class="fas fa-filter"></i>
+            <span>Filtros</span>
+        </button>
+
+        <div class="mobile-filtros-backdrop" id="mobile-filtros-backdrop"></div>
+
+        <div class="container layout-estoque">
+             
+            <!-- LATERAL ESQUERDA: FILTROS -->
+            <aside class="sidebar-filtros" id="mobile-filtros-panel">
+                <div class="filtro-header-mobile">
+                    <h3>Filtros</h3>
+                    <button type="button" class="filtro-fechar-mobile" id="filtro-fechar-mobile" aria-label="Fechar filtros">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Buscar</h3>
+                    <input type="text" id="busca-texto" placeholder="Ex: BMW X4, Compass..." class="input-filtro">
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Marcas</h3>
+                    <div class="lista-marcas">
+                        <label><input type="radio" name="marca" value="Todas" checked> Todas as Marcas</label>
+                        <label><input type="radio" name="marca" value="BMW"> BMW</label>
+                        <label><input type="radio" name="marca" value="Porsche"> Porsche</label>
+                        <label><input type="radio" name="marca" value="Volvo"> Volvo</label>
+                        <label><input type="radio" name="marca" value="Toyota"> Toyota</label>
+                        <label><input type="radio" name="marca" value="Jeep"> Jeep</label>
+                    </div>
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Ano</h3>
+                    <select id="ano-filtro" class="input-filtro">
+                        <option value="todos">Todos</option>
+                        <option value="2025">2025 ou mais</option>
+                        <option value="2024">2024 ou mais</option>
+                        <option value="2023">2023 ou mais</option>
+                        <option value="2022">2022 ou mais</option>
+                        <option value="2021">2021 ou mais</option>
+                    </select>
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Quilometragem</h3>
+                    <select id="km-filtro" class="input-filtro">
+                        <option value="todos">Qualquer</option>
+                        <option value="20000">Até 20.000 km</option>
+                        <option value="50000">Até 50.000 km</option>
+                        <option value="80000">Até 80.000 km</option>
+                        <option value="100000">Até 100.000 km</option>
+                    </select>
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Transmissão</h3>
+                    <select id="transmissao-filtro" class="input-filtro">
+                        <option value="todos">Qualquer</option>
+                        <option value="Automático">Automático</option>
+                        <option value="Manual">Manual</option>
+                    </select>
+                </div>
+
+                <div class="filtro-bloco">
+                    <h3>Faixa de preço</h3>
+                    <select id="preco-filtro" class="input-filtro">
+                        <option value="todos">Qualquer</option>
+                        <option value="100000">Até R$ 100 mil</option>
+                        <option value="200000">Até R$ 200 mil</option>
+                        <option value="300000">Até R$ 300 mil</option>
+                        <option value="500000">Até R$ 500 mil</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-aplicar-filtro" id="btn-aplicar-filtro">
+                    Aplicar filtros
+                </button>
+            </aside>
+
+            <!-- LADO DIREITO: RESULTADOS -->
+            <main class="resultados-estoque">
+                <div class="header-resultados">
+                    <span id="contador-veiculos">8 veículos encontrados</span>
+                </div>
+                
+                <!-- AQUI OS CARROS SERÃO INJETADOS PELO JAVASCRIPT -->
+                <div class="grid-estoque-completo" id="grid-estoque-pagina">
+                    <!-- O JS preencherá isso usando os mesmos cards -->
+                </div>
+            </main>
+ 
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+<footer id="contato">
+        <div class="container footer-grid">
+            <div class="footer-info">
+                <h3>Constherme Garage</h3>
+                <p>R. Zélia de Lima Rosa, 709 - Portal Ville Azaléia, Boituva - SP</p>
+                <p><i class="fas fa-phone"></i> (15) 3363-4000</p>
+            </div>
+            <div class="footer-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.633857502661!2d-47.6853!3d-23.2921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDE3JzMxLjYiUyA0N8KwNDEnMDcuMSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Constherme Garage - Todos os direitos reservados.</p>
+        </div>
+</footer>
+</html>

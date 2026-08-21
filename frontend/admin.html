@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin - Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="admin">
+<header id="navbar" class="scrolled">
+  <div class="container nav-container">
+    <a href="index.html" class="logo" style="text-decoration: none;">
+      <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+      <h2>CONSTHERME <span>GARAGE</span></h2>
+    </a>
+
+    <div class="header-admin" style="position:relative;">
+      <div id="admin-toggle" class="admin-identity" style="display:none;">ADMINISTRADOR</div>
+      <button id="header-logout" class="btn-primary header-logout-btn" type="button" style="display:none;">Sair</button>
+    </div>
+  </div>
+</header>
+
+<main class="admin-page">
+  <div id="admin-area" class="admin-area" style="display:none;">
+    <div class="admin-layout">
+      <aside class="admin-side-panel" aria-label="Painel lateral administrativo">
+        <div class="admin-side-card">
+          <span class="admin-side-label">Painel</span>
+          <h2>Blog</h2>
+          <p>Crie, edite e organize postagens, temas e categorias do site.</p>
+          <ul class="admin-side-links">
+            <li><a href="#post-form">Criar novo post</a></li>
+            <li><a href="#posts-list">Ver postagens</a></li>
+            <li><a href="#change-password-area">Alterar senha</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="admin-main-panel">
+        <div class="card admin-card">
+          <div class="admin-card-header">
+            <h2 id="editor-title">Criar / Editar Post</h2>
+          </div>
+          <form id="post-form">
+            <input type="hidden" id="post-id">
+            <div class="input-block">
+              <label>Título</label>
+              <input type="text" id="post-title" required>
+            </div>
+            <div class="input-block">
+              <label>Resumo (breve)</label>
+              <input type="text" id="post-excerpt">
+            </div>
+
+            <div class="form-row-split">
+              <div class="input-block form-select-wrap">
+                <label>Tema</label>
+                <div class="select-inline">
+                  <div id="theme-display" class="select-padrao">(selecionar tema)</div>
+                  <select id="post-theme" style="display:none;"></select>
+                  <button type="button" id="add-theme" class="btn-primary" title="Adicionar tema">+</button>
+                </div>
+                <div id="theme-dropdown" class="custom-filter-dropdown" style="display:none;position:absolute;z-index:1500;margin-top:6px;"></div>
+              </div>
+
+              <div class="input-block form-select-wrap">
+                <label>Categoria</label>
+                <div class="select-inline">
+                  <div id="category-display" class="select-padrao">(selecionar categoria)</div>
+                  <select id="post-category" style="display:none;"></select>
+                  <button type="button" id="add-category" class="btn-primary" title="Adicionar categoria">+</button>
+                </div>
+                <div id="category-dropdown" class="custom-filter-dropdown" style="display:none;position:absolute;z-index:1500;margin-top:6px;"></div>
+              </div>
+            </div>
+
+            <div class="input-block">
+              <label>Tags (separadas por vírgula)</label>
+              <input type="text" id="post-tags">
+            </div>
+
+            <div class="input-block">
+              <label>Imagem</label>
+              <input type="file" id="post-image" accept="image/*">
+            </div>
+
+            <div class="input-block">
+              <label>Conteúdo (HTML permitido)</label>
+              <textarea id="post-content" rows="10"></textarea>
+            </div>
+
+            <div class="admin-actions">
+              <button type="submit" class="btn-primary">Salvar Post</button>
+              <button type="button" id="clear-form" class="btn-clear">Limpar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card admin-card">
+          <div class="admin-card-header">
+            <h2>Postagens</h2>
+          </div>
+          <div id="posts-list"></div>
+        </div>
+
+        <div id="change-password-area" class="card admin-card password-card" style="display:none;">
+          <div class="admin-card-header">
+            <h2>Alterar senha</h2>
+          </div>
+          <form id="change-password-form">
+            <div class="input-block">
+              <label>Senha atual</label>
+              <input type="password" id="current-password">
+            </div>
+            <div class="input-block">
+              <label>Nova senha</label>
+              <input type="password" id="new-password">
+            </div>
+            <div class="input-block">
+              <label>Confirmar nova senha</label>
+              <input type="password" id="confirm-new-password">
+            </div>
+            <div class="admin-actions compact-actions">
+              <button type="submit" class="btn-primary">Atualizar senha</button>
+            </div>
+            <div id="change-pw-msg" class="form-feedback success"></div>
+            <div id="pw-warning" class="form-feedback warning"></div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+  <footer class="admin-footer">
+    <div class="container admin-footer-inner">
+      <div>
+        <span class="admin-footer-kicker">Constherme Garage</span>
+        <h3>Painel administrativo</h3>
+      </div>
+      <div class="admin-footer-status">
+        <span class="status-dot"></span>
+        Sistema online
+      </div>
+      <div class="admin-footer-meta">
+        <span>Blog ativo</span>
+        <span>Último acesso: hoje</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal for adding theme/category -->
+  <div id="item-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:3000">
+    <div style="background:var(--bg-card);padding:18px;border-radius:10px;width:360px;max-width:90%;box-shadow:0 10px 30px rgba(0,0,0,0.6);">
+      <h3 id="item-modal-title" style="margin-bottom:10px">Adicionar</h3>
+      <div style="margin-bottom:10px">
+        <label for="item-name" style="display:block;margin-bottom:6px;color:var(--text-muted)">Nome</label>
+        <input id="item-name" type="text" style="width:100%;padding:10px;border-radius:6px;border:1px solid #333;background:#121212;color:var(--text-light)">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="item-cancel" class="btn-outline">Cancelar</button>
+        <button id="item-save" class="btn-primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

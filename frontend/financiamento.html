@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financiamento - Constherme Garage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="navbar" class="scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="logo" style="text-decoration: none;">
+                <img src="imagens/logo_constherme.png" alt="Logo Constherme Garage" class="logo-img">
+                <h2>CONSTHERME <span>GARAGE</span></h2>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="estoque.html">Estoque</a>
+                <a href="consignacao.html">Consignação</a>
+                <a href="financiamento.html">Financiamento</a>
+                <a href="blog.html">Blog</a>
+                <a href="contato.html">Contato</a>
+            </nav>
+            <div class="menu-mobile-icon" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-header page-header-financiamento">
+        <div class="container">
+            <h1>Financiamento Descomplicado</h1>
+            <p>Trabalhamos com os principais bancos para garantir as melhores taxas do mercado para o seu próximo nível.</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container layout-consignacao"> <div class="form-container">
+                <h3>Simular Financiamento</h3>
+                <p class="text-muted mb-4">Preencha os dados básicos para que nossos consultores preparem a melhor condição para você.</p>
+                
+                <form id="form-financiamento">
+                    <div class="form-group-duplo">
+                        <div class="input-block">
+                            <label for="fin-nome">Nome Completo</label>
+                            <input type="text" id="fin-nome" placeholder="Ex: João da Silva" required>
+                        </div>
+                        <div class="input-block">
+                            <label for="fin-telefone">Telefone / WhatsApp</label>
+                            <input type="tel" id="fin-telefone" placeholder="(00) 00000-0000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-duplo mt-3">
+                        <div class="input-block">
+                            <label for="fin-cpf">CPF (Apenas números)</label>
+                            <input type="text" id="fin-cpf" placeholder="000.000.000-00" required>
+                        </div>
+                        <div class="input-block">
+                            <label for="fin-data">Data de Nascimento</label>
+                            <input type="date" id="fin-data" required style="color: var(--text-muted);">
+                        </div>
+                    </div>
+
+                    <div class="form-group-duplo mt-3">
+                        <div class="input-block">
+                            <label for="fin-marca">Marca de Interesse (Opcional)</label>
+                            <select id="fin-marca" class="select-padrao">
+                                <option value="" selected>Selecione a Marca</option>
+                                <option value="BMW">BMW</option>
+                                <option value="Volvo">Volvo</option>
+                                <option value="Porsche">Porsche</option>
+                                <option value="Toyota">Toyota</option>
+                                <option value="Jeep">Jeep</option>
+                                <option value="Qualquer">Ainda não decidi</option>
+                            </select>
+                        </div>
+                        <div class="input-block">
+                            <label for="fin-mensagem">Veículo de interesse ou dúvida</label>
+                            <input type="text" id="fin-mensagem" placeholder="Ex: Tenho interesse na BMW X4...">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-full mt-4">Solicitar Simulação via WhatsApp</button>
+                </form>
+            </div>
+
+            <aside class="passos-container">
+                <h3>Aprovação Rápida e Segura</h3>
+                
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-university"></i></div>
+                    <div class="passo-texto">
+                        <h4>1. Múltiplos Bancos</h4>
+                        <p>Cotamos com diversas financeiras parceiras simultaneamente para encontrar a menor taxa de juros disponível para o seu perfil.</p>
+                    </div>
+                </div>
+
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-bolt"></i></div>
+                    <div class="passo-texto">
+                        <h4>2. Análise Ágil</h4>
+                        <p>Resposta de crédito em minutos. Sem burocracia excessiva, garantindo que você não perca a oportunidade de fechar negócio.</p>
+                    </div>
+                </div>
+
+                <div class="passo-box">
+                    <div class="passo-icone"><i class="fas fa-car-side"></i></div>
+                    <div class="passo-texto">
+                        <h4>3. Seu Usado na Troca</h4>
+                        <p>Aceitamos seu veículo seminovo como parte da entrada com a melhor avaliação de Boituva.</p>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </section>
+    <!-- SEÇÃO DE PARCEIROS DE FINANCIAMENTO -->
+    <section class="py-5 partners-section">
+        <div class="container section-title">
+            <h2>Nossos Parceiros</h2>
+            <p>A Constherme Garage Multimarcas LTDA tem parceria com as principais financiadoras do mercado.</p>
+        </div>
+        
+        <div class="container grid-parceiros">
+            <div class="parceiro-box">
+                <!-- Salve a logo do Bradesco na pasta imagens/parceiros/ -->
+                <img src="imagens/parceiros/bradesco.png" alt="Banco Bradesco">
+                <span>Bradesco</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/bv.png" alt="Banco BV">
+                <span>BV</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/c6.png" alt="C6 Bank">
+                <span>C6</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/itau.png" alt="Banco Itaú">
+                <span>Itaú</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/safra.png" alt="Banco Safra">
+                <span>Safra</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/santander.png" alt="Banco Santander">
+                <span>Santander</span>
+            </div>
+            
+            <div class="parceiro-box">
+                <img src="imagens/parceiros/volkswagen.png" alt="Banco Volkswagen">
+                <span>Volkswagen</span>
+            </div>
+        </div>
+    </section>
+    <footer id="contato">
+        <div class="container footer-grid">
+            <div class="footer-info">
+                <h3>Constherme Garage</h3>
+                <p>R. Zélia de Lima Rosa, 709 - Portal Ville Azaléia, Boituva - SP</p>
+                <p><i class="fas fa-phone"></i> (15) 3363-4000</p>
+            </div>
+            <div class="footer-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.633857502661!2d-47.6853!3d-23.2921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDE3JzMxLjYiUyA0N8KwNDEnMDcuMSJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Constherme Garage - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+node_modules/
+.vscode/
+.env
+.env.*
+!.env.example
+
+data/
+frontend/imagens/posts/
+
+cookies.txt
+
+# Vídeos grandes (acima do limite de 100 MB do GitHub)
+frontend/videos/
+npm-debug.log*
+
+Boom_API_Integrador.pdf
+Boom-Sistemas-Respostas.pdf
