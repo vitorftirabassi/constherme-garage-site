@@ -5,6 +5,44 @@
 
 // Simple in-memory cache (per-warm-instance). Good to reduce requests to Boom for high-traffic pages.
 const _cache = new Map();
+const _tokenCache = { accessToken: null, expiresAt: 0 };
+
+async function getBoomAccessToken(baseUrl, clientId, clientSecret) {
+  const now = Date.now();
+  if (_tokenCache.accessToken && _tokenCache.expiresAt > now + 15000) {
+    return _tokenCache.accessToken;
+  }
+
+  const body = new FormData();
+  body.append('grant_type', 'client_credentials');
+  body.append('client_id', clientId);
+  body.append('client_secret', clientSecret);
+
+  const tokenResponse = await fetch(`${baseUrl}/v1/loja/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'X-Forwarded-Proto': 'https',
+      Accept: 'application/json'
+    },
+    body
+  });
+
+  const raw = await tokenResponse.text();
+  let tokenData;
+  try { tokenData = JSON.parse(raw); } catch (e) { tokenData = raw; }
+
+  if (!tokenResponse.ok || !tokenData || !tokenData.access_token) {
+    const error = new Error('Boom auth failed');
+    error.status = tokenResponse.status;
+    error.details = tokenData;
+    throw error;
+  }
+
+  const expiresInSeconds = Number(tokenData.expires_in) || 7200;
+  _tokenCache.accessToken = tokenData.access_token;
+  _tokenCache.expiresAt = now + expiresInSeconds * 1000;
+  return _tokenCache.accessToken;
+}
 
 export default async function handler(req, res) {
   // CORS preflight
@@ -24,6 +62,8 @@ export default async function handler(req, res) {
     BOOM_API_URL,
     BOOM_USERNAME,
     BOOM_PASSWORD,
+    BOOM_CLIENT_ID,
+    BOOM_CLIENT_SECRET,
     BOOM_CNPJ,
     CACHE_TTL_SECONDS
   } = process.env;
@@ -61,11 +101,15 @@ export default async function handler(req, res) {
 
   try {
     const base = BOOM_API_URL.replace(/\/$/, '');
+    const clientId = BOOM_CLIENT_ID || BOOM_USERNAME;
+    const clientSecret = BOOM_CLIENT_SECRET || BOOM_PASSWORD;
+    const accessToken = await getBoomAccessToken(base, clientId, clientSecret);
     const url = `${base}/v1/loja/${cnpj}/veiculo/estoque${queryString ? `?${queryString}` : ''}`;
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
+        'Authorization': `Bearer ${accessToken}`,
         'Username': BOOM_USERNAME,
         'Password': BOOM_PASSWORD,
         'Accept': 'application/json'
@@ -118,6 +162,9 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json(normalized);
   } catch (err) {
+    if (err && err.message === 'Boom auth failed') {
+      return res.status(502).json({ error: err.message, status: err.status, details: err.details });
+    }
     return res.status(500).json({ error: 'Integration error', message: err.message });
   }
 }

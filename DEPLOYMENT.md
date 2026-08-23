@@ -37,9 +37,11 @@ Variáveis de ambiente necessárias
 - `DEFAULT_ADMIN_PASSWORD=<senha inicial forte>`
 
 Integração Boom
-- `BOOM_API_URL`
+- `BOOM_API_URL` (use `https://api.boomsistemas.com.br`)
 - `BOOM_USERNAME`
 - `BOOM_PASSWORD`
+- `BOOM_CLIENT_ID` (opcional, se diferente do BOOM_USERNAME)
+- `BOOM_CLIENT_SECRET` (opcional, se diferente do BOOM_PASSWORD)
 - `BOOM_CNPJ` (14 dígitos, somente números)
 
 Como publicar no Render

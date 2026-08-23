@@ -20,6 +20,7 @@ const sessionSecret = process.env.SESSION_SECRET || defaultSessionSecret;
 const defaultAdminUsername = process.env.DEFAULT_ADMIN_USERNAME || 'admin';
 const defaultAdminPassword = process.env.DEFAULT_ADMIN_PASSWORD || (!isProduction ? 'admin' : null);
 const boomCache = new Map();
+const boomTokenCache = { accessToken: null, expiresAt: 0 };
 
 if (isProduction && sessionSecret === defaultSessionSecret) {
   throw new Error('SESSION_SECRET must be configured in production');
@@ -410,12 +411,55 @@ app.get('/api/posts/:id/related', (req, res) => {
   });
 });
 
+async function getBoomAccessToken(baseUrl, clientId, clientSecret) {
+  const now = Date.now();
+  if (boomTokenCache.accessToken && boomTokenCache.expiresAt > now + 15000) {
+    return boomTokenCache.accessToken;
+  }
+
+  const body = new FormData();
+  body.append('grant_type', 'client_credentials');
+  body.append('client_id', clientId);
+  body.append('client_secret', clientSecret);
+
+  const tokenResponse = await fetch(`${baseUrl}/v1/loja/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'X-Forwarded-Proto': 'https',
+      Accept: 'application/json'
+    },
+    body
+  });
+
+  const raw = await tokenResponse.text();
+  let tokenData;
+  try {
+    tokenData = JSON.parse(raw);
+  } catch (parseError) {
+    tokenData = raw;
+  }
+
+  if (!tokenResponse.ok || !tokenData || !tokenData.access_token) {
+    const error = new Error('Falha ao autenticar na API Boom');
+    error.status = tokenResponse.status;
+    error.details = tokenData;
+    throw error;
+  }
+
+  const expiresInSeconds = Number(tokenData.expires_in) || 7200;
+  boomTokenCache.accessToken = tokenData.access_token;
+  boomTokenCache.expiresAt = now + expiresInSeconds * 1000;
+  return boomTokenCache.accessToken;
+}
+
 // Proxies the Boom stock feed so credentials stay only on the server.
 app.get('/api/boom-stock', async (req, res) => {
   const {
     BOOM_API_URL,
     BOOM_USERNAME,
     BOOM_PASSWORD,
+    BOOM_CLIENT_ID,
+    BOOM_CLIENT_SECRET,
     BOOM_CNPJ,
     CACHE_TTL_SECONDS
   } = process.env;
@@ -450,10 +494,14 @@ app.get('/api/boom-stock', async (req, res) => {
 
   try {
     const base = BOOM_API_URL.replace(/\/$/, '');
+    const clientId = BOOM_CLIENT_ID || BOOM_USERNAME;
+    const clientSecret = BOOM_CLIENT_SECRET || BOOM_PASSWORD;
+    const accessToken = await getBoomAccessToken(base, clientId, clientSecret);
     const url = `${base}/v1/loja/${cnpj}/veiculo/estoque${queryString ? `?${queryString}` : ''}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
+        Authorization: `Bearer ${accessToken}`,
         Username: BOOM_USERNAME,
         Password: BOOM_PASSWORD,
         Accept: 'application/json'
@@ -508,6 +556,9 @@ app.get('/api/boom-stock', async (req, res) => {
 
     return res.json(normalized);
   } catch (error) {
+    if (error && error.message === 'Falha ao autenticar na API Boom') {
+      return res.status(502).json({ error: error.message, status: error.status, details: error.details });
+    }
     return res.status(500).json({ error: 'Falha ao buscar estoque da Boom', message: error.message });
   }
 });
