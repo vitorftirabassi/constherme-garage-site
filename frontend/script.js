@@ -152,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof iniciarFormularioConsignacao === 'function') iniciarFormularioConsignacao();
     if (typeof iniciarFormularioFinanciamento === 'function') iniciarFormularioFinanciamento();
     if (typeof iniciarFormularioContato === 'function') iniciarFormularioContato();
-    if (typeof iniciarFiltroModelosConsignacao === 'function') iniciarFiltroModelosConsignacao();
 
     // ATENÇÃO: É esta linha que liga os filtros da página de Blog!
     if (typeof iniciarFiltrosBlog === 'function') iniciarFiltrosBlog();
@@ -400,31 +399,36 @@ function iniciarFormularioConsignacao() {
     if (!formConsignacao) return;
 
     formConsignacao.addEventListener('submit', function(event) {
-        // Impede que a página recarregue ao clicar no botão
         event.preventDefault();
 
-        // Captura os valores digitados pelo usuário
-        const nome = document.getElementById('nome').value.trim();
-        const telefone = document.getElementById('telefone').value.trim();
-        const marca = document.getElementById('marca').value.trim();
-        const modelo = document.getElementById('modelo').value.trim();
-        const mensagem = document.getElementById('mensagem').value.trim();
+        const nome = document.getElementById('nome')?.value.trim() || '';
+        const telefone = document.getElementById('telefone')?.value.trim() || '';
+        const marca = document.getElementById('consignacao-marca')?.value.trim() || '';
+        const modelo = document.getElementById('consignacao-modelo')?.value.trim() || '';
+        const ano = document.getElementById('consignacao-ano')?.value.trim() || '';
+        const mensagem = document.getElementById('mensagem')?.value.trim() || '';
 
-        // Constrói a mensagem profissional para o consultor da loja
+        if (!nome || !telefone || !marca || !modelo || !ano) {
+            alert('Preencha todos os campos obrigatórios antes de enviar a avaliação.');
+            return;
+        }
+
         let textoWhatsApp = `Olá, equipe Constherme Garage! Meu nome é *${nome}* e gostaria de solicitar uma avaliação para consignação do meu veículo.\n\n`;
         textoWhatsApp += `*🚗 Veículo:* ${marca} ${modelo}\n`;
+        textoWhatsApp += `*📅 Ano:* ${ano}\n`;
         textoWhatsApp += `*📱 Meu Contato:* ${telefone}\n`;
         
-        // Só adiciona a observação se o cliente tiver digitado algo
         if (mensagem !== "") {
             textoWhatsApp += `\n*📝 Observações:* ${mensagem}`;
         }
 
-        // Codifica o texto para o formato de URL e abre o WhatsApp da loja
         const numeroLoja = "551533634000";
         const linkWpp = `https://wa.me/${numeroLoja}?text=${encodeURIComponent(textoWhatsApp)}`;
-        
-        window.open(linkWpp, '_blank');
+        const popup = window.open(linkWpp, '_blank');
+
+        if (!popup) {
+            window.location.href = linkWpp;
+        }
     });
 }
 
@@ -603,138 +607,6 @@ function iniciarDropdownData() {
         if (!customSelect.contains(e.target)) {
             itemsContainer.classList.add('select-hide');
             selected.style.borderColor = '#444';
-        }
-    });
-}
-// 13. Lógica do Dropdown em Cascata (Consignação)
-function iniciarFiltroModelosConsignacao() {
-    const selectMarca = document.getElementById('consignacao-marca');
-    const customSelectModelo = document.getElementById('custom-modelo-select');
-    const selectedText = customSelectModelo ? customSelectModelo.querySelector('.select-selected') : null;
-    const listaModelos = document.getElementById('lista-modelos-dropdown');
-    const inputHiddenModelo = document.getElementById('consignacao-modelo-hidden');
-    const containerOutroModelo = document.getElementById('container-outro-modelo');
-    const inputOutroModelo = document.getElementById('consignacao-outro-modelo');
-
-    if (!selectMarca || !customSelectModelo) return;
-
-    // Mini Banco de Dados Simulado (Mock)
-    const bancoDeCarros = {
-        "Fiat": {
-            "Argo": ["1.0", "Drive 1.0", "Trekking 1.3"],
-            "Toro": ["Endurance 1.8", "Volcano 2.0 Diesel", "Ultra 2.0 Diesel"]
-        },
-        "Volkswagen": {
-            "Polo": ["Track 1.0", "Comfortline 200 TSI", "Highline 200 TSI"],
-            "Nivus": ["Comfortline", "Highline"]
-        },
-        "BMW": {
-            "X4": ["xDrive 30i M Sport"],
-            "Série 3": ["320i GP", "320i M Sport"]
-        }
-    };
-
-    // 1. Quando o usuário escolhe a Marca
-    selectMarca.addEventListener('change', function() {
-        const marca = this.value;
-        listaModelos.innerHTML = ''; // Limpa a lista anterior
-        inputHiddenModelo.value = '';
-        selectedText.innerText = 'Selecione o Modelo';
-        containerOutroModelo.style.display = 'none';
-        
-        if (marca === "Outra") {
-            customSelectModelo.classList.add('disabled');
-            selectedText.innerText = 'Digite o modelo abaixo';
-            inputHiddenModelo.value = 'Outro';
-            containerOutroModelo.style.display = 'block';
-            inputOutroModelo.required = true;
-            return;
-        }
-
-        // Habilita o dropdown customizado
-        customSelectModelo.classList.remove('disabled');
-
-        // Gera o HTML da Sanfona baseado na marca escolhida
-        const modelos = bancoDeCarros[marca] || {};
-        for (const [modelo, versoes] of Object.entries(modelos)) {
-            let htmlVersoes = '';
-            versoes.forEach(versao => {
-                htmlVersoes += `<div class="item-opcao" data-value="${modelo} - ${versao}">${versao}</div>`;
-            });
-
-            listaModelos.innerHTML += `
-                <div class="grupo-modelo">
-                    <div class="modelo-titulo">${modelo} <i class="fas fa-chevron-down"></i></div>
-                    <div class="versoes-lista" style="display: none;">
-                        ${htmlVersoes}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Adiciona a opção "Outros" no final da lista
-        listaModelos.innerHTML += `<div class="item-opcao" data-value="Outro" style="font-weight: bold; text-align: center; background: #222;">Não encontrei meu modelo (Outros)</div>`;
-
-        ativarInteracoesDoDropdown();
-    });
-
-    // 2. Controla os cliques dentro do dropdown customizado
-    function ativarInteracoesDoDropdown() {
-        const titulosModelo = customSelectModelo.querySelectorAll('.modelo-titulo');
-        const opcoes = customSelectModelo.querySelectorAll('.item-opcao');
-
-        titulosModelo.forEach(titulo => {
-            titulo.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const listaVersoes = this.nextElementSibling;
-                const icone = this.querySelector('i');
-                
-                if (listaVersoes.style.display === 'none') {
-                    listaVersoes.style.display = 'block';
-                    icone.classList.replace('fa-chevron-down', 'fa-chevron-up');
-                } else {
-                    listaVersoes.style.display = 'none';
-                    icone.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                }
-            });
-        });
-
-        opcoes.forEach(opcao => {
-            opcao.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const valor = this.getAttribute('data-value');
-                
-                if (valor === "Outro") {
-                    selectedText.innerText = "Outro Modelo";
-                    inputHiddenModelo.value = "Outro";
-                    containerOutroModelo.style.display = 'block';
-                    inputOutroModelo.required = true;
-                } else {
-                    selectedText.innerText = valor;
-                    inputHiddenModelo.value = valor;
-                    containerOutroModelo.style.display = 'none';
-                    inputOutroModelo.required = false;
-                }
-
-                listaModelos.classList.add('select-hide');
-                selectedText.style.borderColor = '#444';
-            });
-        });
-    }
-
-    // 3. Abrir/Fechar a caixa principal
-    selectedText.addEventListener('click', function(e) {
-        if (customSelectModelo.classList.contains('disabled')) return;
-        e.stopPropagation();
-        listaModelos.classList.toggle('select-hide');
-        selectedText.style.borderColor = listaModelos.classList.contains('select-hide') ? '#444' : 'var(--primary-color)';
-    });
-
-    // 4. Fechar se clicar fora
-    document.addEventListener('click', function(e) {
-        if (!customSelectModelo.contains(e.target) && listaModelos) {
-            listaModelos.classList.add('select-hide');
-            if (selectedText) selectedText.style.borderColor = '#444';
         }
     });
 }

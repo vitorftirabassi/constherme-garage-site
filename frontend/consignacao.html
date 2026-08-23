@@ -63,29 +63,28 @@
                                 <option value="" disabled selected>Selecione a Marca</option>
                                 <option value="Fiat">Fiat</option>
                                 <option value="Volkswagen">Volkswagen</option>
+                                <option value="Chevrolet">Chevrolet</option>
+                                <option value="Toyota">Toyota</option>
+                                <option value="Hyundai">Hyundai</option>
+                                <option value="Jeep">Jeep</option>
+                                <option value="Honda">Honda</option>
+                                <option value="Nissan">Nissan</option>
+                                <option value="Renault">Renault</option>
                                 <option value="BMW">BMW</option>
+                                <option value="Mercedes-Benz">Mercedes-Benz</option>
+                                <option value="Audi">Audi</option>
+                                <option value="Volvo">Volvo</option>
+                                <option value="Porsche">Porsche</option>
                                 <option value="Outra">Outra Marca</option>
                             </select>
                         </div>
-                     
-                        <div class="input-block custom-dropdown-container">
-                            <label>Modelo e Versão</label>
-                            <input type="hidden" id="consignacao-modelo-hidden" required>
-                            
-                            <div class="custom-select disabled" id="custom-modelo-select">
-                                <div class="select-selected">Escolha a Marca primeiro</div>
-                                <div class="select-items select-hide" id="lista-modelos-dropdown">
-                                    </div>
-                            </div>
+                        <div class="input-block">
+                            <label for="consignacao-modelo">Modelo e Versão</label>
+                            <input type="text" id="consignacao-modelo" placeholder="Ex: Corolla XEi 2.0" required>
                         </div>
                     </div>
 
                     <div class="form-group-duplo mt-3">
-                        <div class="input-block" id="container-outro-modelo" style="display: none;">
-                            <label for="consignacao-outro-modelo">Qual é o modelo/versão?</label>
-                            <input type="text" id="consignacao-outro-modelo" placeholder="Ex: Fusca 1500">
-                        </div>
-
                         <div class="input-block">
                             <label for="consignacao-ano">Ano (Fabricação/Modelo)</label>
                             <input type="text" id="consignacao-ano" placeholder="Ex: 2023/2024" required>
