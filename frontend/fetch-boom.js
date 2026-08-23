@@ -2,17 +2,28 @@
 // Failures are intentionally non-fatal so the site can still render with fallback data.
 (async function(){
     async function normalizeVehicle(v) {
+        const firstGallery = Array.isArray(v.galeria) ? v.galeria.find(item => item && item.veiculo_galeria_url) : null;
+        const galleryImage = firstGallery ? `https://arquivos.boomsistemas.com.br/veiculos/${firstGallery.veiculo_galeria_url}` : null;
+        const kmValue = v.km || v.kilometragem || v.veiculo_km || v.KM;
+        const priceValue = v.preco || v.price || v.preco_venda || v.Price || v.veiculo_valor || v.valor;
+        const normalizedPrice = typeof priceValue === 'number'
+            ? priceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+            : (priceValue || 'Sob consulta');
+        const normalizedKm = kmValue
+            ? (typeof kmValue === 'string' && /km/i.test(kmValue) ? kmValue : `${kmValue} km`)
+            : '0 km';
+
         // Best-effort normalization from common API shapes
         return {
-            id: v.id || v.Id || v.codigo || v.Codigo || v.codigo_veiculo || Math.random()*1000000,
-            marca: v.marca || v.brand || v.make || v.Marca || v.Brand || 'Marca',
-            modelo: v.modelo || v.model || v.Modelo || v.Model || 'Modelo',
-            versao: v.versao || v.version || v.Versao || '',
-            ano: v.ano || v.year || v.ano_fabricacao || v.Year || '',
-            km: v.km || v.kilometragem || v.mileage || v.KM || '0 km',
+            id: v.id || v.Id || v.codigo || v.Codigo || v.codigo_veiculo || v.veiculo_id || Math.random()*1000000,
+            marca: v.marca || v.brand || v.make || v.Marca || v.Brand || v.veiculo_marca_nome || 'Marca',
+            modelo: v.modelo || v.model || v.Modelo || v.Model || v.veiculo_modelo_nome || 'Modelo',
+            versao: v.versao || v.version || v.Versao || v.veiculo_versao || '',
+            ano: v.ano || v.year || v.ano_fabricacao || v.Year || v.veiculo_ano || '',
+            km: normalizedKm,
             cambio: v.cambio || v.transmission || v.Cambio || '',
-            preco: v.preco || v.price || v.preco_venda || v.Price || 'Sob consulta',
-            foto: v.foto || v.image || v.photo || v.imagem || 'imagens/img_carros/default.jpg',
+            preco: normalizedPrice,
+            foto: v.fotoUrl || galleryImage || v.foto || v.image || v.photo || v.imagem || 'imagens/img_carros/default.jpg',
             tags: v.tags || v.tags_list || [],
             especificacoes: v.especificacoes || {}
         };

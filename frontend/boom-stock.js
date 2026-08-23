@@ -1,13 +1,14 @@
-// Proxy helper for development: fetches Boom full stock from the API using environment-like headers.
+// Proxy helper for development: fetches Boom stock from the API using environment-like headers.
 // NOTE: For Vercel/Netlify you should place an equivalent function under frontend/api/boom-stock.js
 // (this file is a reference implementation you can adapt / move to the proper serverless location).
 
 const http = require('http');
 const https = require('https');
 
-async function fetchFromBoom(base, filial, usuario, username, password) {
+async function fetchFromBoom(base, cnpj, username, password) {
   const baseClean = base.replace(/\/$/, '');
-  const url = `${baseClean}/api/fullestoque/filial/${filial}/user/${usuario}`;
+  const cnpjOnlyDigits = String(cnpj || '').replace(/\D/g, '');
+  const url = `${baseClean}/v1/loja/${cnpjOnlyDigits}/veiculo/estoque`;
   const lib = url.startsWith('https') ? https : http;
 
   return new Promise((resolve, reject) => {

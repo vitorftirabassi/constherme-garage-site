@@ -40,8 +40,7 @@ Integração Boom
 - `BOOM_API_URL`
 - `BOOM_USERNAME`
 - `BOOM_PASSWORD`
-- `FILIAL`
-- `USUARIO`
+- `BOOM_CNPJ` (14 dígitos, somente números)
 
 Como publicar no Render
 1. Suba o projeto para um repositório GitHub.
