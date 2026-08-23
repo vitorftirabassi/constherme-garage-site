@@ -400,31 +400,39 @@ function iniciarFormularioConsignacao() {
     if (!formConsignacao) return;
 
     formConsignacao.addEventListener('submit', function(event) {
-        // Impede que a página recarregue ao clicar no botão
         event.preventDefault();
 
-        // Captura os valores digitados pelo usuário
-        const nome = document.getElementById('nome').value.trim();
-        const telefone = document.getElementById('telefone').value.trim();
-        const marca = document.getElementById('marca').value.trim();
-        const modelo = document.getElementById('modelo').value.trim();
-        const mensagem = document.getElementById('mensagem').value.trim();
+        const nome = document.getElementById('nome')?.value.trim() || '';
+        const telefone = document.getElementById('telefone')?.value.trim() || '';
+        const marca = document.getElementById('consignacao-marca')?.value.trim() || '';
+        const modeloSelecionado = document.getElementById('consignacao-modelo-hidden')?.value.trim() || '';
+        const modeloOutro = document.getElementById('consignacao-outro-modelo')?.value.trim() || '';
+        const ano = document.getElementById('consignacao-ano')?.value.trim() || '';
+        const mensagem = document.getElementById('mensagem')?.value.trim() || '';
 
-        // Constrói a mensagem profissional para o consultor da loja
+        const modelo = (modeloSelecionado === 'Outro') ? modeloOutro : modeloSelecionado;
+
+        if (!nome || !telefone || !marca || !modelo || !ano) {
+            alert('Preencha todos os campos obrigatórios antes de enviar a avaliação.');
+            return;
+        }
+
         let textoWhatsApp = `Olá, equipe Constherme Garage! Meu nome é *${nome}* e gostaria de solicitar uma avaliação para consignação do meu veículo.\n\n`;
         textoWhatsApp += `*🚗 Veículo:* ${marca} ${modelo}\n`;
+        textoWhatsApp += `*📅 Ano:* ${ano}\n`;
         textoWhatsApp += `*📱 Meu Contato:* ${telefone}\n`;
         
-        // Só adiciona a observação se o cliente tiver digitado algo
         if (mensagem !== "") {
             textoWhatsApp += `\n*📝 Observações:* ${mensagem}`;
         }
 
-        // Codifica o texto para o formato de URL e abre o WhatsApp da loja
         const numeroLoja = "551533634000";
         const linkWpp = `https://wa.me/${numeroLoja}?text=${encodeURIComponent(textoWhatsApp)}`;
-        
-        window.open(linkWpp, '_blank');
+        const popup = window.open(linkWpp, '_blank');
+
+        if (!popup) {
+            window.location.href = linkWpp;
+        }
     });
 }
 
