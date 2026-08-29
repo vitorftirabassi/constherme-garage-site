@@ -43,6 +43,26 @@ const carrosBoomMock = [
     { id: 8, marca: "Toyota", modelo: "Hilux", versao: "2.8 SRX 4X4 CD Diesel", ano: "2021", km: "78.000 km", cambio: "Automático", preco: "R$ 235.000", foto: "imagens/img_carros/toyotahilux.jpg", tags: ["Laudo Aprovado", "Vistoriado"] }
 ];
 
+let carrosEstoqueAtuais = carrosBoomMock;
+
+function atualizarEstoqueBoom(carros) {
+    if (!Array.isArray(carros) || carros.length === 0) return;
+
+    carrosEstoqueAtuais = carros;
+    renderizarEstoquePagina(carrosEstoqueAtuais);
+
+    const grid = document.getElementById('grid-carros');
+    if (grid) {
+        grid.innerHTML = '';
+        carrosEstoqueAtuais.forEach(carro => {
+            grid.innerHTML += `<div class="swiper-slide">${gerarHTMLCard(carro)}</div>`;
+        });
+        iniciarSwiper();
+    }
+
+    window.dispatchEvent(new Event('estoqueBoomAtualizado'));
+}
+
 // 1. Função pura: Gera apenas o interior do card
 function gerarHTMLCard(carro) {
     const msgWhatsapp = `Olá! Tenho interesse no veículo ${carro.marca} ${carro.modelo} (${carro.ano}) que vi no site.`;
@@ -271,7 +291,7 @@ function iniciarFiltros() {
         const transmissaoSelecionada = selectTransmissao ? selectTransmissao.value : 'todos';
         const precoSelecionado = selectPreco ? selectPreco.value : 'todos';
 
-        const carrosFiltrados = carrosBoomMock.filter(carro => {
+        const carrosFiltrados = carrosEstoqueAtuais.filter(carro => {
             const textoCompletoCarro = `${carro.marca} ${carro.modelo} ${carro.versao}`.toLowerCase();
             const passouNoTexto = textoCompletoCarro.includes(termoBusca);
             const passouNaMarca = marcaSelecionada === 'Todas' || carro.marca === marcaSelecionada;
@@ -305,10 +325,18 @@ function carregarDetalhesVeiculo() {
     if (!container) return; // Proteção: Só avança se a div existir na tela
 
     const urlParams = new URLSearchParams(window.location.search);
-    const idCarro = parseInt(urlParams.get('id'));
-    const carro = carrosBoomMock.find(c => c.id === idCarro);
+    const idCarro = urlParams.get('id');
+    const carro = carrosEstoqueAtuais.find(c => String(c.id) === String(idCarro));
 
     if (!carro) {
+        if (String(idCarro).length > 3 && carrosEstoqueAtuais === carrosBoomMock) {
+            container.innerHTML = `<div class="container text-center py-5"><h2>Carregando veículo...</h2></div>`;
+            if (!container.dataset.boomListener) {
+                container.dataset.boomListener = 'true';
+                window.addEventListener('estoqueBoomAtualizado', carregarDetalhesVeiculo, { once: true });
+            }
+            return;
+        }
         container.innerHTML = `<div class="container text-center py-5"><h2>Veículo não encontrado.</h2><a href="estoque.html" class="btn-primary">Voltar ao Estoque</a></div>`;
         return;
     }

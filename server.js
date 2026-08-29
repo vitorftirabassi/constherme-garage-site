@@ -8,6 +8,21 @@ const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
 
+const envFile = path.join(__dirname, '.env');
+if (fs.existsSync(envFile)) {
+  for (const line of fs.readFileSync(envFile, 'utf8').split(/\r?\n/)) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith('#')) continue;
+
+    const separator = trimmedLine.indexOf('=');
+    if (separator === -1) continue;
+
+    const key = trimmedLine.slice(0, separator).trim();
+    const value = trimmedLine.slice(separator + 1).trim();
+    if (key && process.env[key] === undefined) process.env[key] = value;
+  }
+}
+
 const app = express();
 // Runtime configuration centralized here so local dev and hosting use the same code path.
 const PORT = process.env.PORT || 3000;
