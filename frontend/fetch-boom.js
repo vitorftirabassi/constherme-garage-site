@@ -2,8 +2,8 @@
 // Failures are intentionally non-fatal so the site can still render with fallback data.
 (async function(){
     async function normalizeVehicle(v) {
-        const firstGallery = Array.isArray(v.galeria) ? v.galeria.find(item => item && item.veiculo_galeria_url) : null;
-        const galleryImage = firstGallery ? `https://arquivos.boomsistemas.com.br/veiculos/${firstGallery.veiculo_galeria_url}` : null;
+        const firstGallery = Array.isArray(v.galeria) ? v.galeria.find(item => item && (item.url_imagem || item.veiculo_galeria_url)) : null;
+        const galleryImage = firstGallery ? (firstGallery.url_imagem || `https://arquivos.boomsistemas.com.br/veiculos/${firstGallery.veiculo_galeria_url}`) : null;
         const kmValue = v.km || v.kilometragem || v.veiculo_km || v.KM;
         const priceValue = v.preco || v.price || v.preco_venda || v.Price || v.veiculo_valor || v.valor;
         const normalizedPrice = typeof priceValue === 'number'

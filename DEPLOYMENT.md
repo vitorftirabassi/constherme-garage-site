@@ -37,12 +37,18 @@ Variáveis de ambiente necessárias
 - `DEFAULT_ADMIN_PASSWORD=<senha inicial forte>`
 
 Integração Boom
-- `BOOM_API_URL` (use `https://api.boomsistemas.com.br`)
-- `BOOM_USERNAME`
-- `BOOM_PASSWORD`
-- `BOOM_CLIENT_ID` (opcional, se diferente do BOOM_USERNAME)
-- `BOOM_CLIENT_SECRET` (opcional, se diferente do BOOM_PASSWORD)
-- `BOOM_CNPJ` (14 dígitos, somente números)
+- `BOOM_API_URL` (use `https://boomsistemas.com.br`)
+- `BOOM_USERNAME` (usuário HTTP exigido pela API)
+- `BOOM_PASSWORD` (senha HTTP exigida pela API)
+- `BOOM_FILIAL` (código da filial que o suporte da Boom informa)
+- `BOOM_USUARIO` (opcional; normalmente igual ao `BOOM_USERNAME`)
+- `BOOM_CNPJ` (mantido apenas para compatibilidade com integrações antigas; não é o fluxo principal atual)
+
+Fluxo atual da Boom
+- O endpoint correto do estoque é: `GET https://boomsistemas.com.br/api/fullestoque/filial/{CODIGO_FILIAL}/user/{CODIGO_USUARIO}`
+- A autenticação é por headers HTTP `Username` e `Password`
+- Não existe OAuth nem `client_id/client_secret` no fluxo de estoque completo
+- Se o retorno vier vazio, os veículos provavelmente não estão habilitados na aba de integração/site do sistema da Boom
 
 Como publicar no Render
 1. Suba o projeto para um repositório GitHub.

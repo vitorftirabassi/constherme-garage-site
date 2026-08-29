@@ -20,7 +20,6 @@ const sessionSecret = process.env.SESSION_SECRET || defaultSessionSecret;
 const defaultAdminUsername = process.env.DEFAULT_ADMIN_USERNAME || 'admin';
 const defaultAdminPassword = process.env.DEFAULT_ADMIN_PASSWORD || (!isProduction ? 'admin' : null);
 const boomCache = new Map();
-const boomTokenCache = { accessToken: null, expiresAt: 0 };
 
 if (isProduction && sessionSecret === defaultSessionSecret) {
   throw new Error('SESSION_SECRET must be configured in production');
@@ -411,66 +410,27 @@ app.get('/api/posts/:id/related', (req, res) => {
   });
 });
 
-async function getBoomAccessToken(baseUrl, clientId, clientSecret) {
-  const now = Date.now();
-  if (boomTokenCache.accessToken && boomTokenCache.expiresAt > now + 15000) {
-    return boomTokenCache.accessToken;
-  }
-
-  const body = new FormData();
-  body.append('grant_type', 'client_credentials');
-  body.append('client_id', clientId);
-  body.append('client_secret', clientSecret);
-
-  const tokenResponse = await fetch(`${baseUrl}/v1/loja/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      'X-Forwarded-Proto': 'https',
-      Accept: 'application/json'
-    },
-    body
-  });
-
-  const raw = await tokenResponse.text();
-  let tokenData;
-  try {
-    tokenData = JSON.parse(raw);
-  } catch (parseError) {
-    tokenData = raw;
-  }
-
-  if (!tokenResponse.ok || !tokenData || !tokenData.access_token) {
-    const error = new Error('Falha ao autenticar na API Boom');
-    error.status = tokenResponse.status;
-    error.details = tokenData;
-    throw error;
-  }
-
-  const expiresInSeconds = Number(tokenData.expires_in) || 7200;
-  boomTokenCache.accessToken = tokenData.access_token;
-  boomTokenCache.expiresAt = now + expiresInSeconds * 1000;
-  return boomTokenCache.accessToken;
-}
-
-// Proxies the Boom stock feed so credentials stay only on the server.
+// Proxies the Boom stock feed using the HTTP basic-auth flow actually required by the Boom API.
 app.get('/api/boom-stock', async (req, res) => {
   const {
     BOOM_API_URL,
     BOOM_USERNAME,
     BOOM_PASSWORD,
-    BOOM_CLIENT_ID,
-    BOOM_CLIENT_SECRET,
+    BOOM_FILIAL,
+    BOOM_USUARIO,
     BOOM_CNPJ,
     CACHE_TTL_SECONDS
   } = process.env;
 
-  if (!BOOM_API_URL || !BOOM_USERNAME || !BOOM_PASSWORD || !BOOM_CNPJ) {
+  if (!BOOM_API_URL || !BOOM_USERNAME || !BOOM_PASSWORD) {
     return res.status(503).json({ error: 'Integração Boom não configurada no servidor' });
   }
 
-  const cnpj = String(BOOM_CNPJ).replace(/\D/g, '');
-  if (cnpj.length !== 14) {
-    return res.status(500).json({ error: 'Integração Boom inválida: BOOM_CNPJ deve conter 14 dígitos' });
+  const filial = String(BOOM_FILIAL || BOOM_CNPJ || '').replace(/\D/g, '');
+  const usuario = String(BOOM_USUARIO || BOOM_USERNAME).trim();
+
+  if (!filial || !usuario) {
+    return res.status(500).json({ error: 'Integração Boom inválida: configure BOOM_FILIAL e BOOM_USUARIO ou BOOM_CNPJ' });
   }
 
   const query = new URLSearchParams();
@@ -493,15 +453,12 @@ app.get('/api/boom-stock', async (req, res) => {
   }
 
   try {
-    const base = BOOM_API_URL.replace(/\/$/, '');
-    const clientId = BOOM_CLIENT_ID || BOOM_USERNAME;
-    const clientSecret = BOOM_CLIENT_SECRET || BOOM_PASSWORD;
-    const accessToken = await getBoomAccessToken(base, clientId, clientSecret);
-    const url = `${base}/v1/loja/${cnpj}/veiculo/estoque${queryString ? `?${queryString}` : ''}`;
+    const base = BOOM_API_URL.replace(/\/$/, '').replace('https://api.boomsistemas.com.br', 'https://boomsistemas.com.br');
+    const url = `${base}/api/fullestoque/filial/${encodeURIComponent(filial)}/user/${encodeURIComponent(usuario)}` + (queryString ? `?${queryString}` : '');
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
         Username: BOOM_USERNAME,
         Password: BOOM_PASSWORD,
         Accept: 'application/json'
@@ -520,46 +477,38 @@ app.get('/api/boom-stock', async (req, res) => {
       return res.status(502).json({ error: 'Erro retornado pela API Boom', status: response.status, details: data });
     }
 
-    const imageBaseUrl = 'https://arquivos.boomsistemas.com.br/veiculos/';
-    const withImageUrls = (vehicle) => {
-      if (!vehicle || typeof vehicle !== 'object') return vehicle;
-      const gallery = Array.isArray(vehicle.galeria) ? vehicle.galeria : [];
-      const normalizedGallery = gallery.map((item) => {
-        const relativeUrl = item && typeof item.veiculo_galeria_url === 'string' ? item.veiculo_galeria_url.trim() : '';
+    const normalizeVehicleGallery = (item) => {
+      const gallery = Array.isArray(item && item.galeria) ? item.galeria : [];
+      const normalizedGallery = gallery.map(image => {
+        const relativeUrl = image && typeof image.veiculo_galeria_url === 'string' ? image.veiculo_galeria_url.trim() : '';
+        const absoluteUrl = image && typeof image.url_imagem === 'string' ? image.url_imagem.trim() : '';
         return {
-          ...item,
-          veiculo_galeria_full_url: relativeUrl ? `${imageBaseUrl}${relativeUrl}` : null
+          ...image,
+          veiculo_galeria_full_url: relativeUrl ? `https://arquivos.boomsistemas.com.br/veiculos/${relativeUrl}` : null,
+          url_imagem_absoluta: absoluteUrl || null
         };
       });
-      const firstImage = normalizedGallery.find((item) => item.veiculo_galeria_full_url)?.veiculo_galeria_full_url || null;
+      const firstImage = normalizedGallery.find(img => img.url_imagem_absoluta || img.veiculo_galeria_full_url)?.url_imagem_absoluta || normalizedGallery.find(img => img.url_imagem_absoluta || img.veiculo_galeria_full_url)?.veiculo_galeria_full_url || null;
       return {
-        ...vehicle,
+        ...item,
         galeria: normalizedGallery,
-        fotoUrl: firstImage,
-        fotosUrls: normalizedGallery
-          .map((item) => item.veiculo_galeria_full_url)
-          .filter(Boolean)
+        fotoUrl: item?.fotoUrl || firstImage,
+        fotosUrls: normalizedGallery.map(img => img.url_imagem_absoluta || img.veiculo_galeria_full_url).filter(Boolean)
       };
     };
 
     let normalized = data;
     if (Array.isArray(data)) {
-      normalized = data.map(withImageUrls);
+      normalized = data.map(normalizeVehicleGallery);
     } else if (data && typeof data === 'object' && Array.isArray(data.data)) {
-      normalized = { ...data, data: data.data.map(withImageUrls) };
+      normalized = { ...data, data: data.data.map(normalizeVehicleGallery) };
     }
 
-    boomCache.set(cacheKey, {
-      data: normalized,
-      expiresAt: now + ttlSeconds * 1000
-    });
-
+    boomCache.set(cacheKey, { data: normalized, expiresAt: now + ttlSeconds * 1000 });
     return res.json(normalized);
   } catch (error) {
-    if (error && error.message === 'Falha ao autenticar na API Boom') {
-      return res.status(502).json({ error: error.message, status: error.status, details: error.details });
-    }
-    return res.status(500).json({ error: 'Falha ao buscar estoque da Boom', message: error.message });
+    console.error('Erro ao consultar Boom:', error);
+    return res.status(502).json({ error: 'Falha ao consultar a API Boom', status: error.status || 502, details: error.details || error.message });
   }
 });
 
