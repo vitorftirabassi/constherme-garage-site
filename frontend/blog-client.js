@@ -34,7 +34,7 @@ async function loadBlogPosts() {
       imgContainer.className = 'img-container';
       const tagsCont = document.createElement('div');
       tagsCont.className = 'tags-container';
-      if (p.theme) tagsCont.innerHTML = `<span class="badge-premium">${escapeHtml(p.theme)}</span>`;
+      if (p.theme) tagsCont.innerHTML = `<span class="badge-destaque">${escapeHtml(p.theme)}</span>`;
       imgContainer.appendChild(tagsCont);
       if (p.image_path) imgContainer.innerHTML += `<img src="${p.image_path}" alt="${escapeHtml(p.title)}">`;
 

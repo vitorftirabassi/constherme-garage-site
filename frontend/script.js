@@ -74,7 +74,7 @@ function gerarHTMLCard(carro) {
     if (carro.tags && carro.tags.length > 0) {
         tagsHTML = '<div class="tags-container">';
         carro.tags.forEach(tag => {
-            tagsHTML += `<span class="badge-premium">${tag}</span>`;
+            tagsHTML += `<span class="badge-destaque">${tag}</span>`;
         });
         tagsHTML += '</div>';
     }

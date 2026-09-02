@@ -136,7 +136,7 @@ header.scrolled {
 .overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(18,18,18,1));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(18,18,18,0.6));
     z-index: -1;
 }
 
@@ -1190,8 +1190,8 @@ header.menu-open {
     z-index: 10;
 }
 
-/* Estilo do Selo Premium Atualizado */
-.badge-premium {
+/* Estilo do selo de destaque */
+.badge-destaque {
     background: rgba(18, 18, 18, 0.7);
     backdrop-filter: blur(4px);
     color: var(--primary-color);
@@ -1489,7 +1489,7 @@ header.menu-open {
 
 /* === PÁGINA DE FINANCIAMENTO === */
 .page-header-financiamento {
-    /* Sugestão: Use uma foto de chaves de carro, assinatura de contrato ou interior premium */
+    /* Sugestão: Use uma foto de chaves de carro, assinatura de contrato ou interior da loja */
     background: linear-gradient(to bottom, rgba(18,18,18,0.8), rgba(18,18,18,1)), url('imagens/bg-financiamento.jpg') center/cover;
 }
 
@@ -1676,7 +1676,7 @@ header.menu-open {
 /* Ajuste de altura da imagem para Computadores/Tablets */
 @media (min-width: 768px) {
     .card-blog-horizontal .img-container {
-        height: 350px; /* Fica parecendo um banner super premium no PC */
+        height: 350px; /* Cria uma presença de banner no PC */
     }
     .card-blog-horizontal .content-bar h3 {
         font-size: 1.3rem; /* Título um pouco maior na tela grande */
