@@ -1,5 +1,4 @@
-// Replaces mock stock with Boom data when the backend proxy is configured.
-// Failures are intentionally non-fatal so the site can still render with fallback data.
+// Loads stock exclusively from the Boom backend proxy.
 (async function(){
     async function normalizeVehicle(v) {
         const firstGallery = Array.isArray(v.galeria) ? v.galeria.find(item => item && (item.url_imagem || item.veiculo_galeria_url)) : null;
@@ -41,7 +40,7 @@
     async function fetchAndRender() {
         try {
             const resp = await fetch('/api/boom-stock');
-            if (!resp.ok) return; // silent fail — keeps mock data
+            if (!resp.ok) return;
             const data = await resp.json();
 
             // Attempt to find array of vehicles in common locations
@@ -69,10 +68,10 @@
         }
     }
 
-    // Wait a short time to ensure original script.js has defined its functions
+    // script.js is loaded before this file, so stock can be fetched as soon as the DOM is ready.
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => setTimeout(fetchAndRender, 300));
+        document.addEventListener('DOMContentLoaded', fetchAndRender);
     } else {
-        setTimeout(fetchAndRender, 300);
+        fetchAndRender();
     }
 })();
