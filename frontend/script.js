@@ -1,5 +1,4 @@
 // Shared frontend script for the public pages: navigation, stock showcase, filters and forms.
-// The stock starts with mock data and can be replaced at runtime by fetch-boom.js when the API is available.
 
 // Efeito de escurecer o menu ao rolar a página
 window.addEventListener("scroll", function() {
@@ -11,44 +10,14 @@ window.addEventListener("scroll", function() {
     }
 });
 
-// Banco de Dados Falso (Mock) simulando a resposta da Boom Sistemas
-const carrosBoomMock = [
-    { 
-        id: 1, 
-        marca: "BMW", 
-        modelo: "X4", 
-        versao: "xDrive 30i M Sport", 
-        ano: "2023", 
-        km: "15.000 km", 
-        cambio: "Automático", 
-        preco: "R$ 450.000", 
-        foto: "imagens/img_carros/bmwx4.webp",
-        tags: ["Laudo Aprovado", "Único Dono"], // Nova propriedade de tags
-        especificacoes: {
-            motor: "2.0 TwinPower Turbo",
-            potencia: "252 cv",
-            torque: "35,7 kgfm",
-            tracao: "Integral (AWD)",
-            combustivel: "Gasolina",
-            portaMalas: "525 Litros",
-            velocidadeMaxima: "240 km/h"
-        }
-    },
-    { id: 2, marca: "Volvo", modelo: "V60", versao: "2.0 T8 Inscription", ano: "2024", km: "8.500 km", cambio: "Automático", preco: "R$ 520.000", foto: "imagens/img_carros/volvov60.webp", tags: ["Laudo Aprovado", "IPVA 2024 Pago"] },
-    { id: 3, marca: "Fiat", modelo: "Mobi", versao: "1.0 EVO Flex Trekking", ano: "2024/2025", km: "29.791 km", cambio: "Manual", preco: "R$ 65.000", foto: "imagens/img_carros/fiatmobi.webp", tags: ["Laudo Aprovado"] },
-    { id: 4, marca: "Hyundai", modelo: "HB20", versao: "Comfort Plus 1.0", ano: "2025", km: "0 km", cambio: "Manual", preco: "R$ 87.900", foto: "imagens/img_carros/hyundaihb20s.webp", tags: ["Zero KM", "Pronta Entrega"] },
-    { id: 5, marca: "Porsche", modelo: "Macan", versao: "2.0 16V T Macan", ano: "2023", km: "11.500 km", cambio: "Automático", preco: "R$ 580.000", foto: "imagens/img_carros/porschemacan.webp", tags: ["Laudo Aprovado", "Revisado"] },
-    { id: 6, marca: "Jeep", modelo: "Compass", versao: "2.0 Série S 4X4 Diesel", ano: "2022", km: "45.000 km", cambio: "Automático", preco: "R$ 175.900", foto: "imagens/img_carros/jeepcompass2022.jpg", tags: ["Laudo Aprovado"] },
-    { id: 7, marca: "Chevrolet", modelo: "Tracker", versao: "1.2 Turbo Premier", ano: "2024", km: "8.200 km", cambio: "Automático", preco: "R$ 139.900", foto: "imagens/img_carros/chevrolettracker2024.jpg", tags: ["Garantia de Fábrica"] },
-    { id: 8, marca: "Toyota", modelo: "Hilux", versao: "2.8 SRX 4X4 CD Diesel", ano: "2021", km: "78.000 km", cambio: "Automático", preco: "R$ 235.000", foto: "imagens/img_carros/toyotahilux.jpg", tags: ["Laudo Aprovado", "Vistoriado"] }
-];
-
-let carrosEstoqueAtuais = carrosBoomMock;
+let carrosEstoqueAtuais = [];
+let estoqueBoomCarregado = false;
 
 function atualizarEstoqueBoom(carros) {
-    if (!Array.isArray(carros) || carros.length === 0) return;
+    if (!Array.isArray(carros)) return;
 
     carrosEstoqueAtuais = carros;
+    estoqueBoomCarregado = true;
     renderizarEstoquePagina(carrosEstoqueAtuais);
 
     const grid = document.getElementById('grid-carros');
@@ -111,21 +80,8 @@ function gerarHTMLCard(carro) {
     `;
 }
 
-// 2. Renderiza apenas se estiver na Home (com Swiper)
-function renderizarEstoqueHome() {
-    const grid = document.getElementById('grid-carros');
-    if (!grid) return; 
-
-    grid.innerHTML = '';
-    carrosBoomMock.forEach(carro => {
-        grid.innerHTML += `<div class="swiper-slide">${gerarHTMLCard(carro)}</div>`;
-    });
-    
-    iniciarSwiper();
-}
-
-// 3. Renderiza apenas se estiver na página de Estoque
-function renderizarEstoquePagina(listaCarros = carrosBoomMock) {
+// 2. Renderiza apenas se estiver na página de Estoque
+function renderizarEstoquePagina(listaCarros = []) {
     const gridCompleto = document.getElementById('grid-estoque-pagina');
     const contador = document.getElementById('contador-veiculos');
     
@@ -141,7 +97,7 @@ function renderizarEstoquePagina(listaCarros = carrosBoomMock) {
     }
 }
 
-// 4. Inicialização do Swiper
+// 3. Inicialização do Swiper
 function iniciarSwiper() {
     if (typeof Swiper !== 'undefined') {
         new Swiper(".mySwiper", {
@@ -149,7 +105,7 @@ function iniciarSwiper() {
             observeParents: true,
             slidesPerView: 1,
             spaceBetween: 20,
-            loop: true,
+            loop: carrosEstoqueAtuais.length > 1,
             pagination: { el: ".swiper-pagination", clickable: true },
             navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
             breakpoints: {
@@ -162,9 +118,6 @@ function iniciarSwiper() {
 
 // Central initialization keeps one script serving multiple pages without crashing on missing elements.
 document.addEventListener('DOMContentLoaded', () => {
-    // Funções das páginas de estoque e home
-    if (typeof renderizarEstoqueHome === 'function') renderizarEstoqueHome();
-    if (typeof renderizarEstoquePagina === 'function') renderizarEstoquePagina(); 
     if (typeof iniciarFiltros === 'function') iniciarFiltros(); 
     if (typeof carregarDetalhesVeiculo === 'function') carregarDetalhesVeiculo();
     
@@ -253,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Helpers convert formatted UI labels into numbers so filters work with the current mock/API shapes.
+// Helpers convert formatted UI labels into numbers so filters work with the API response.
 function extrairAnoNumerico(valor) {
     const match = String(valor).match(/\d{4}/);
     return match ? Number(match[0]) : 0;
@@ -329,7 +282,7 @@ function carregarDetalhesVeiculo() {
     const carro = carrosEstoqueAtuais.find(c => String(c.id) === String(idCarro));
 
     if (!carro) {
-        if (String(idCarro).length > 3 && carrosEstoqueAtuais === carrosBoomMock) {
+        if (!estoqueBoomCarregado) {
             container.innerHTML = `<div class="container text-center py-5"><h2>Carregando veículo...</h2></div>`;
             if (!container.dataset.boomListener) {
                 container.dataset.boomListener = 'true';
