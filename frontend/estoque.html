@@ -70,13 +70,9 @@
 
                 <div class="filtro-bloco">
                     <h3>Marcas</h3>
-                    <div class="lista-marcas">
+                    <div class="lista-marcas" id="lista-marcas">
                         <label><input type="radio" name="marca" value="Todas" checked> Todas as Marcas</label>
-                        <label><input type="radio" name="marca" value="BMW"> BMW</label>
-                        <label><input type="radio" name="marca" value="Porsche"> Porsche</label>
-                        <label><input type="radio" name="marca" value="Volvo"> Volvo</label>
-                        <label><input type="radio" name="marca" value="Toyota"> Toyota</label>
-                        <label><input type="radio" name="marca" value="Jeep"> Jeep</label>
+                        <!-- As demais marcas são geradas automaticamente pelo JS, com base no estoque atual -->
                     </div>
                 </div>
 
@@ -138,6 +134,9 @@
                 <div class="grid-estoque-completo" id="grid-estoque-pagina">
                     <!-- O JS preencherá isso usando os mesmos cards -->
                 </div>
+
+                <!-- Paginação: evita carregar todos os veículos de uma vez na página -->
+                <nav class="paginacao-estoque" id="paginacao-estoque" aria-label="Paginação de veículos"></nav>
             </main>
  
         </div>

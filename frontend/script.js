@@ -13,11 +13,16 @@ window.addEventListener("scroll", function() {
 let carrosEstoqueAtuais = [];
 let estoqueBoomCarregado = false;
 
+// Pagination keeps the stock page light even when the dealership has hundreds of vehicles.
+const VEICULOS_POR_PAGINA = 12;
+let paginaEstoqueAtual = 1;
+
 function atualizarEstoqueBoom(carros) {
     if (!Array.isArray(carros)) return;
 
     carrosEstoqueAtuais = carros;
     estoqueBoomCarregado = true;
+    atualizarFiltroMarcas(carrosEstoqueAtuais);
     renderizarEstoquePagina(carrosEstoqueAtuais);
 
     const grid = document.getElementById('grid-carros');
@@ -81,20 +86,61 @@ function gerarHTMLCard(carro) {
 }
 
 // 2. Renderiza apenas se estiver na página de Estoque
-function renderizarEstoquePagina(listaCarros = []) {
+function renderizarEstoquePagina(listaCarros = [], pagina = 1) {
     const gridCompleto = document.getElementById('grid-estoque-pagina');
     const contador = document.getElementById('contador-veiculos');
-    
-    if (!gridCompleto) return; 
+
+    if (!gridCompleto) return;
+
+    const totalPaginas = Math.max(1, Math.ceil(listaCarros.length / VEICULOS_POR_PAGINA));
+    paginaEstoqueAtual = Math.min(Math.max(1, pagina), totalPaginas);
+
+    const inicio = (paginaEstoqueAtual - 1) * VEICULOS_POR_PAGINA;
+    const carrosDaPagina = listaCarros.slice(inicio, inicio + VEICULOS_POR_PAGINA);
 
     gridCompleto.innerHTML = '';
-    listaCarros.forEach(carro => {
-        gridCompleto.innerHTML += gerarHTMLCard(carro); 
+    carrosDaPagina.forEach(carro => {
+        gridCompleto.innerHTML += gerarHTMLCard(carro);
     });
 
     if (contador) {
         contador.innerText = `${listaCarros.length} veículos encontrados`;
     }
+
+    renderizarPaginacaoEstoque(listaCarros, totalPaginas);
+}
+
+// Builds numbered page controls and wires them to re-render the current filtered list.
+function renderizarPaginacaoEstoque(listaCarros, totalPaginas) {
+    const nav = document.getElementById('paginacao-estoque');
+    if (!nav) return;
+
+    nav.innerHTML = '';
+
+    if (totalPaginas <= 1) return;
+
+    const criarBotao = (label, pagina, opcoes = {}) => {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'pagina-botao';
+        botao.innerHTML = label;
+        botao.disabled = !!opcoes.desabilitado;
+        if (opcoes.ativo) botao.classList.add('ativo');
+        botao.addEventListener('click', () => {
+            renderizarEstoquePagina(listaCarros, pagina);
+            const grid = document.getElementById('grid-estoque-pagina');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return botao;
+    };
+
+    nav.appendChild(criarBotao('<i class="fas fa-chevron-left"></i>', paginaEstoqueAtual - 1, { desabilitado: paginaEstoqueAtual === 1 }));
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+        nav.appendChild(criarBotao(String(pagina), pagina, { ativo: pagina === paginaEstoqueAtual }));
+    }
+
+    nav.appendChild(criarBotao('<i class="fas fa-chevron-right"></i>', paginaEstoqueAtual + 1, { desabilitado: paginaEstoqueAtual === totalPaginas }));
 }
 
 // 3. Inicialização do Swiper
@@ -224,13 +270,50 @@ function extrairPrecoNumerico(valor) {
     return Number.isFinite(numero) ? numero : 0;
 }
 
+// Builds the "Marcas" filter options from whatever brands actually exist in the current stock,
+// so a brand only appears (or disappears) when there is at least one vehicle for it.
+function atualizarFiltroMarcas(listaCarros = []) {
+    const container = document.getElementById('lista-marcas');
+    if (!container) return;
+
+    const radioAtivo = container.querySelector('input[name="marca"]:checked');
+    const marcaSelecionadaAntes = radioAtivo ? radioAtivo.value : 'Todas';
+
+    const marcasUnicas = Array.from(new Set(
+        listaCarros
+            .map(carro => (carro.marca || '').trim())
+            .filter(marca => marca && marca !== 'Marca')
+    )).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    let html = '<label><input type="radio" name="marca" value="Todas"> Todas as Marcas</label>';
+    marcasUnicas.forEach(marca => {
+        html += `<label><input type="radio" name="marca" value="${escapeHtml(marca)}"> ${escapeHtml(marca)}</label>`;
+    });
+    container.innerHTML = html;
+
+    // Keeps the previously selected brand checked if it still exists in stock; otherwise falls back to "Todas".
+    const marcaAindaExiste = marcaSelecionadaAntes === 'Todas' || marcasUnicas.includes(marcaSelecionadaAntes);
+    const valorParaMarcar = marcaAindaExiste ? marcaSelecionadaAntes : 'Todas';
+    const radioParaMarcar = container.querySelector(`input[name="marca"][value="${CSS.escape(valorParaMarcar)}"]`);
+    if (radioParaMarcar) radioParaMarcar.checked = true;
+}
+
+function escapeHtml(texto) {
+    return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function iniciarFiltros() {
     const inputBusca = document.getElementById('busca-texto');
     const selectAno = document.getElementById('ano-filtro');
     const selectKm = document.getElementById('km-filtro');
     const selectTransmissao = document.getElementById('transmissao-filtro');
     const selectPreco = document.getElementById('preco-filtro');
-    const radiosMarca = document.querySelectorAll('input[name="marca"]');
+    const listaMarcas = document.getElementById('lista-marcas');
     
     if (!inputBusca) return;
 
@@ -261,9 +344,13 @@ function iniciarFiltros() {
     }
 
     inputBusca.addEventListener('input', aplicarFiltros); 
-    radiosMarca.forEach(radio => {
-        radio.addEventListener('change', aplicarFiltros);
-    });
+    if (listaMarcas) {
+        listaMarcas.addEventListener('change', function(event) {
+            if (event.target && event.target.name === 'marca') {
+                aplicarFiltros();
+            }
+        });
+    }
 
     [selectAno, selectKm, selectTransmissao, selectPreco].forEach(select => {
         if (select) {
@@ -297,6 +384,12 @@ function carregarDetalhesVeiculo() {
     const msgWhatsapp = `Olá! Gostaria de mais informações sobre o ${carro.marca} ${carro.modelo} ${carro.versao} (${carro.ano}) de ${carro.preco}.`;
     const linkWpp = `https://wa.me/551533634000?text=${encodeURIComponent(msgWhatsapp)}`;
 
+    // Evita repetir o texto quando "modelo" já inclui a "versão" (comum nos dados vindos do Boom).
+    const versaoJaIncluidaNoModelo = carro.versao && String(carro.modelo).includes(carro.versao);
+    const nomeVeiculoParaFinanciamento = versaoJaIncluidaNoModelo
+        ? `${carro.marca} ${carro.modelo}`.trim()
+        : `${carro.marca} ${carro.modelo} ${carro.versao || ''}`.trim();
+
     // CORREÇÃO 2: Verificação da Ficha Técnica Detalhada implementada
     let htmlEspecificacoesDetalhadas = '';
     if (carro.especificacoes) {
@@ -306,12 +399,24 @@ function carregarDetalhesVeiculo() {
                 <ul class="lista-especificacoes">
                     <li><span>Motor</span> <strong>${carro.especificacoes.motor}</strong></li>
                     <li><span>Potência</span> <strong>${carro.especificacoes.potencia}</strong></li>
-                    <li><span>Torque</span> <strong>${carro.especificacoes.torque}</strong></li>
-                    <li><span>Tração</span> <strong>${carro.especificacoes.tracao}</strong></li>
+                    <li><span>Cor</span> <strong>${carro.especificacoes.cor}</strong></li>
+                    <li><span>Portas</span> <strong>${carro.especificacoes.portas}</strong></li>
+                    <li><span>Blindado</span> <strong>${carro.especificacoes.blindado}</strong></li>
                     <li><span>Combustível</span> <strong>${carro.especificacoes.combustivel}</strong></li>
-                    <li><span>Porta-Malas</span> <strong>${carro.especificacoes.portaMalas}</strong></li>
-                    <li><span>Velocidade Máxima</span> <strong>${carro.especificacoes.velocidadeMaxima}</strong></li>
                 </ul>
+            </div>
+        `;
+    }
+
+    // Lista de equipamentos e opcionais reais do veículo, fornecida pela Boom.
+    let htmlOpcionais = '';
+    if (Array.isArray(carro.opcionais) && carro.opcionais.length > 0) {
+        htmlOpcionais = `
+            <div class="secao-especificacoes">
+                <h3>Equipamentos e Opcionais</h3>
+                <div class="lista-opcionais">
+                    ${carro.opcionais.map(item => `<span class="tag-opcional"><i class="fas fa-check"></i> ${item}</span>`).join('')}
+                </div>
             </div>
         `;
     }
@@ -353,6 +458,8 @@ function carregarDetalhesVeiculo() {
                 
                 ${htmlEspecificacoesDetalhadas}
                 
+                ${htmlOpcionais}
+                
             </div>
 
             <aside>
@@ -364,7 +471,7 @@ function carregarDetalhesVeiculo() {
                     <a href="${linkWpp}" target="_blank" class="btn-whatsapp-large">
                         <i class="fab fa-whatsapp"></i> Falar com Especialista
                     </a>
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; border-color: #333; color: var(--text-light);">
+                    <a href="financiamento.html?veiculo=${encodeURIComponent(nomeVeiculoParaFinanciamento)}" class="btn-outline" style="width: 100%; text-align: center; border-color: #333; color: var(--text-light);">
                         Simular Financiamento
                     </a>
                 </div>
@@ -415,6 +522,22 @@ function iniciarFormularioFinanciamento() {
     
     if (!formFinanciamento) return;
 
+    // Pré-preenche o formulário quando o usuário chega vindo do botão "Simular Financiamento" de um anúncio.
+    const urlParams = new URLSearchParams(window.location.search);
+    const veiculoInteresse = urlParams.get('veiculo');
+    if (veiculoInteresse) {
+        const campoMensagem = document.getElementById('fin-mensagem');
+        if (campoMensagem) campoMensagem.value = `Tenho interesse no ${veiculoInteresse}`;
+
+        const campoMarca = document.getElementById('fin-marca');
+        if (campoMarca) {
+            const opcaoCorrespondente = Array.from(campoMarca.options).find(opcao =>
+                opcao.value && veiculoInteresse.toLowerCase().includes(opcao.value.toLowerCase())
+            );
+            if (opcaoCorrespondente) campoMarca.value = opcaoCorrespondente.value;
+        }
+    }
+
     formFinanciamento.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -422,25 +545,19 @@ function iniciarFormularioFinanciamento() {
         const telefone = document.getElementById('fin-telefone').value.trim();
         const cpf = document.getElementById('fin-cpf').value.trim();
         const dataNascimento = document.getElementById('fin-data').value;
-        const valorCarro = parseFloat(document.getElementById('fin-valor-carro').value);
-        const valorEntrada = parseFloat(document.getElementById('fin-entrada').value);
+        const marca = document.getElementById('fin-marca') ? document.getElementById('fin-marca').value : '';
         const mensagem = document.getElementById('fin-mensagem').value.trim();
-
-        // Formatação em moeda brasileira (BRL)
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valorFinanciado = valorCarro - valorEntrada;
 
         let textoWhatsApp = `Olá, equipe Constherme Garage!\n`;
         textoWhatsApp += `Meu nome é *${nome}* e gostaria de uma simulação de financiamento.\n\n`;
         textoWhatsApp += `*📋 Meus Dados:*\n`;
         textoWhatsApp += `- CPF: ${cpf}\n`;
         textoWhatsApp += `- Nascimento: ${dataNascimento.split('-').reverse().join('/')}\n`;
-        textoWhatsApp += `- Telefone: ${telefone}\n\n`;
-        
-        textoWhatsApp += `*💰 Valores da Simulação:*\n`;
-        textoWhatsApp += `- Valor do Veículo: ${formatarMoeda(valorCarro)}\n`;
-        textoWhatsApp += `- Valor da Entrada: ${formatarMoeda(valorEntrada)}\n`;
-        textoWhatsApp += `- Valor a Financiar: *${formatarMoeda(valorFinanciado)}*\n`;
+        textoWhatsApp += `- Telefone: ${telefone}\n`;
+
+        if (marca !== "") {
+            textoWhatsApp += `- Marca de Interesse: ${marca}\n`;
+        }
 
         if (mensagem !== "") {
             textoWhatsApp += `\n*📝 Observação/Veículo:* ${mensagem}`;
