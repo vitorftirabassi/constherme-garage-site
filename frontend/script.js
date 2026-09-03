@@ -384,6 +384,12 @@ function carregarDetalhesVeiculo() {
     const msgWhatsapp = `Olá! Gostaria de mais informações sobre o ${carro.marca} ${carro.modelo} ${carro.versao} (${carro.ano}) de ${carro.preco}.`;
     const linkWpp = `https://wa.me/551533634000?text=${encodeURIComponent(msgWhatsapp)}`;
 
+    // Evita repetir o texto quando "modelo" já inclui a "versão" (comum nos dados vindos do Boom).
+    const versaoJaIncluidaNoModelo = carro.versao && String(carro.modelo).includes(carro.versao);
+    const nomeVeiculoParaFinanciamento = versaoJaIncluidaNoModelo
+        ? `${carro.marca} ${carro.modelo}`.trim()
+        : `${carro.marca} ${carro.modelo} ${carro.versao || ''}`.trim();
+
     // CORREÇÃO 2: Verificação da Ficha Técnica Detalhada implementada
     let htmlEspecificacoesDetalhadas = '';
     if (carro.especificacoes) {
@@ -451,7 +457,7 @@ function carregarDetalhesVeiculo() {
                     <a href="${linkWpp}" target="_blank" class="btn-whatsapp-large">
                         <i class="fab fa-whatsapp"></i> Falar com Especialista
                     </a>
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; border-color: #333; color: var(--text-light);">
+                    <a href="financiamento.html?veiculo=${encodeURIComponent(nomeVeiculoParaFinanciamento)}" class="btn-outline" style="width: 100%; text-align: center; border-color: #333; color: var(--text-light);">
                         Simular Financiamento
                     </a>
                 </div>
@@ -502,6 +508,22 @@ function iniciarFormularioFinanciamento() {
     
     if (!formFinanciamento) return;
 
+    // Pré-preenche o formulário quando o usuário chega vindo do botão "Simular Financiamento" de um anúncio.
+    const urlParams = new URLSearchParams(window.location.search);
+    const veiculoInteresse = urlParams.get('veiculo');
+    if (veiculoInteresse) {
+        const campoMensagem = document.getElementById('fin-mensagem');
+        if (campoMensagem) campoMensagem.value = `Tenho interesse no ${veiculoInteresse}`;
+
+        const campoMarca = document.getElementById('fin-marca');
+        if (campoMarca) {
+            const opcaoCorrespondente = Array.from(campoMarca.options).find(opcao =>
+                opcao.value && veiculoInteresse.toLowerCase().includes(opcao.value.toLowerCase())
+            );
+            if (opcaoCorrespondente) campoMarca.value = opcaoCorrespondente.value;
+        }
+    }
+
     formFinanciamento.addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -509,25 +531,19 @@ function iniciarFormularioFinanciamento() {
         const telefone = document.getElementById('fin-telefone').value.trim();
         const cpf = document.getElementById('fin-cpf').value.trim();
         const dataNascimento = document.getElementById('fin-data').value;
-        const valorCarro = parseFloat(document.getElementById('fin-valor-carro').value);
-        const valorEntrada = parseFloat(document.getElementById('fin-entrada').value);
+        const marca = document.getElementById('fin-marca') ? document.getElementById('fin-marca').value : '';
         const mensagem = document.getElementById('fin-mensagem').value.trim();
-
-        // Formatação em moeda brasileira (BRL)
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        const valorFinanciado = valorCarro - valorEntrada;
 
         let textoWhatsApp = `Olá, equipe Constherme Garage!\n`;
         textoWhatsApp += `Meu nome é *${nome}* e gostaria de uma simulação de financiamento.\n\n`;
         textoWhatsApp += `*📋 Meus Dados:*\n`;
         textoWhatsApp += `- CPF: ${cpf}\n`;
         textoWhatsApp += `- Nascimento: ${dataNascimento.split('-').reverse().join('/')}\n`;
-        textoWhatsApp += `- Telefone: ${telefone}\n\n`;
-        
-        textoWhatsApp += `*💰 Valores da Simulação:*\n`;
-        textoWhatsApp += `- Valor do Veículo: ${formatarMoeda(valorCarro)}\n`;
-        textoWhatsApp += `- Valor da Entrada: ${formatarMoeda(valorEntrada)}\n`;
-        textoWhatsApp += `- Valor a Financiar: *${formatarMoeda(valorFinanciado)}*\n`;
+        textoWhatsApp += `- Telefone: ${telefone}\n`;
+
+        if (marca !== "") {
+            textoWhatsApp += `- Marca de Interesse: ${marca}\n`;
+        }
 
         if (mensagem !== "") {
             textoWhatsApp += `\n*📝 Observação/Veículo:* ${mensagem}`;
