@@ -1058,6 +1058,44 @@ header.menu-open {
     }
 }
 
+/* Paginação da página de estoque */
+.paginacao-estoque {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 40px;
+}
+
+.paginacao-estoque .pagina-botao {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(29,29,29,0.9);
+    color: var(--text-light);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.paginacao-estoque .pagina-botao:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.paginacao-estoque .pagina-botao.ativo {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.paginacao-estoque .pagina-botao:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 @media (max-width: 1024px) {
     .mobile-filtros-toggle {
         position: fixed;

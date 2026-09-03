@@ -13,11 +13,16 @@ window.addEventListener("scroll", function() {
 let carrosEstoqueAtuais = [];
 let estoqueBoomCarregado = false;
 
+// Pagination keeps the stock page light even when the dealership has hundreds of vehicles.
+const VEICULOS_POR_PAGINA = 12;
+let paginaEstoqueAtual = 1;
+
 function atualizarEstoqueBoom(carros) {
     if (!Array.isArray(carros)) return;
 
     carrosEstoqueAtuais = carros;
     estoqueBoomCarregado = true;
+    atualizarFiltroMarcas(carrosEstoqueAtuais);
     renderizarEstoquePagina(carrosEstoqueAtuais);
 
     const grid = document.getElementById('grid-carros');
@@ -81,20 +86,61 @@ function gerarHTMLCard(carro) {
 }
 
 // 2. Renderiza apenas se estiver na página de Estoque
-function renderizarEstoquePagina(listaCarros = []) {
+function renderizarEstoquePagina(listaCarros = [], pagina = 1) {
     const gridCompleto = document.getElementById('grid-estoque-pagina');
     const contador = document.getElementById('contador-veiculos');
-    
-    if (!gridCompleto) return; 
+
+    if (!gridCompleto) return;
+
+    const totalPaginas = Math.max(1, Math.ceil(listaCarros.length / VEICULOS_POR_PAGINA));
+    paginaEstoqueAtual = Math.min(Math.max(1, pagina), totalPaginas);
+
+    const inicio = (paginaEstoqueAtual - 1) * VEICULOS_POR_PAGINA;
+    const carrosDaPagina = listaCarros.slice(inicio, inicio + VEICULOS_POR_PAGINA);
 
     gridCompleto.innerHTML = '';
-    listaCarros.forEach(carro => {
-        gridCompleto.innerHTML += gerarHTMLCard(carro); 
+    carrosDaPagina.forEach(carro => {
+        gridCompleto.innerHTML += gerarHTMLCard(carro);
     });
 
     if (contador) {
         contador.innerText = `${listaCarros.length} veículos encontrados`;
     }
+
+    renderizarPaginacaoEstoque(listaCarros, totalPaginas);
+}
+
+// Builds numbered page controls and wires them to re-render the current filtered list.
+function renderizarPaginacaoEstoque(listaCarros, totalPaginas) {
+    const nav = document.getElementById('paginacao-estoque');
+    if (!nav) return;
+
+    nav.innerHTML = '';
+
+    if (totalPaginas <= 1) return;
+
+    const criarBotao = (label, pagina, opcoes = {}) => {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'pagina-botao';
+        botao.innerHTML = label;
+        botao.disabled = !!opcoes.desabilitado;
+        if (opcoes.ativo) botao.classList.add('ativo');
+        botao.addEventListener('click', () => {
+            renderizarEstoquePagina(listaCarros, pagina);
+            const grid = document.getElementById('grid-estoque-pagina');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return botao;
+    };
+
+    nav.appendChild(criarBotao('<i class="fas fa-chevron-left"></i>', paginaEstoqueAtual - 1, { desabilitado: paginaEstoqueAtual === 1 }));
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina++) {
+        nav.appendChild(criarBotao(String(pagina), pagina, { ativo: pagina === paginaEstoqueAtual }));
+    }
+
+    nav.appendChild(criarBotao('<i class="fas fa-chevron-right"></i>', paginaEstoqueAtual + 1, { desabilitado: paginaEstoqueAtual === totalPaginas }));
 }
 
 // 3. Inicialização do Swiper
@@ -224,13 +270,50 @@ function extrairPrecoNumerico(valor) {
     return Number.isFinite(numero) ? numero : 0;
 }
 
+// Builds the "Marcas" filter options from whatever brands actually exist in the current stock,
+// so a brand only appears (or disappears) when there is at least one vehicle for it.
+function atualizarFiltroMarcas(listaCarros = []) {
+    const container = document.getElementById('lista-marcas');
+    if (!container) return;
+
+    const radioAtivo = container.querySelector('input[name="marca"]:checked');
+    const marcaSelecionadaAntes = radioAtivo ? radioAtivo.value : 'Todas';
+
+    const marcasUnicas = Array.from(new Set(
+        listaCarros
+            .map(carro => (carro.marca || '').trim())
+            .filter(marca => marca && marca !== 'Marca')
+    )).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    let html = '<label><input type="radio" name="marca" value="Todas"> Todas as Marcas</label>';
+    marcasUnicas.forEach(marca => {
+        html += `<label><input type="radio" name="marca" value="${escapeHtml(marca)}"> ${escapeHtml(marca)}</label>`;
+    });
+    container.innerHTML = html;
+
+    // Keeps the previously selected brand checked if it still exists in stock; otherwise falls back to "Todas".
+    const marcaAindaExiste = marcaSelecionadaAntes === 'Todas' || marcasUnicas.includes(marcaSelecionadaAntes);
+    const valorParaMarcar = marcaAindaExiste ? marcaSelecionadaAntes : 'Todas';
+    const radioParaMarcar = container.querySelector(`input[name="marca"][value="${CSS.escape(valorParaMarcar)}"]`);
+    if (radioParaMarcar) radioParaMarcar.checked = true;
+}
+
+function escapeHtml(texto) {
+    return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function iniciarFiltros() {
     const inputBusca = document.getElementById('busca-texto');
     const selectAno = document.getElementById('ano-filtro');
     const selectKm = document.getElementById('km-filtro');
     const selectTransmissao = document.getElementById('transmissao-filtro');
     const selectPreco = document.getElementById('preco-filtro');
-    const radiosMarca = document.querySelectorAll('input[name="marca"]');
+    const listaMarcas = document.getElementById('lista-marcas');
     
     if (!inputBusca) return;
 
@@ -261,9 +344,13 @@ function iniciarFiltros() {
     }
 
     inputBusca.addEventListener('input', aplicarFiltros); 
-    radiosMarca.forEach(radio => {
-        radio.addEventListener('change', aplicarFiltros);
-    });
+    if (listaMarcas) {
+        listaMarcas.addEventListener('change', function(event) {
+            if (event.target && event.target.name === 'marca') {
+                aplicarFiltros();
+            }
+        });
+    }
 
     [selectAno, selectKm, selectTransmissao, selectPreco].forEach(select => {
         if (select) {
