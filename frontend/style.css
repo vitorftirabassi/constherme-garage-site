@@ -1408,6 +1408,30 @@ header.menu-open {
     text-align: right;
 }
 
+/* === EQUIPAMENTOS E OPCIONAIS === */
+.lista-opcionais {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag-opcional {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #222;
+    border-radius: 20px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.tag-opcional i {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
 /* === PÁGINA DE CONSIGNAÇÃO E FORMULÁRIOS === */
 .page-header-consignacao {
     /* Pode trocar a imagem de fundo por uma foto do showroom da Constherme */

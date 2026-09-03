@@ -399,12 +399,24 @@ function carregarDetalhesVeiculo() {
                 <ul class="lista-especificacoes">
                     <li><span>Motor</span> <strong>${carro.especificacoes.motor}</strong></li>
                     <li><span>Potência</span> <strong>${carro.especificacoes.potencia}</strong></li>
-                    <li><span>Torque</span> <strong>${carro.especificacoes.torque}</strong></li>
-                    <li><span>Tração</span> <strong>${carro.especificacoes.tracao}</strong></li>
+                    <li><span>Cor</span> <strong>${carro.especificacoes.cor}</strong></li>
+                    <li><span>Portas</span> <strong>${carro.especificacoes.portas}</strong></li>
+                    <li><span>Blindado</span> <strong>${carro.especificacoes.blindado}</strong></li>
                     <li><span>Combustível</span> <strong>${carro.especificacoes.combustivel}</strong></li>
-                    <li><span>Porta-Malas</span> <strong>${carro.especificacoes.portaMalas}</strong></li>
-                    <li><span>Velocidade Máxima</span> <strong>${carro.especificacoes.velocidadeMaxima}</strong></li>
                 </ul>
+            </div>
+        `;
+    }
+
+    // Lista de equipamentos e opcionais reais do veículo, fornecida pela Boom.
+    let htmlOpcionais = '';
+    if (Array.isArray(carro.opcionais) && carro.opcionais.length > 0) {
+        htmlOpcionais = `
+            <div class="secao-especificacoes">
+                <h3>Equipamentos e Opcionais</h3>
+                <div class="lista-opcionais">
+                    ${carro.opcionais.map(item => `<span class="tag-opcional"><i class="fas fa-check"></i> ${item}</span>`).join('')}
+                </div>
             </div>
         `;
     }
@@ -445,6 +457,8 @@ function carregarDetalhesVeiculo() {
                 </div>
                 
                 ${htmlEspecificacoesDetalhadas}
+                
+                ${htmlOpcionais}
                 
             </div>
 
