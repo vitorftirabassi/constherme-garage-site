@@ -29,12 +29,12 @@
             especificacoes: v.especificacoes || {
                 motor: v.veiculo_motor || 'Não informado',
                 potencia: v.veiculo_potencia ? `${v.veiculo_potencia} cv` : 'Não informado',
-                torque: 'Não informado',
-                tracao: v.opcionais && v.opcionais.includes('Tração 4x4') ? '4x4' : 'Não informado',
-                combustivel: v.veiculo_combustivel || 'Não informado',
-                portaMalas: 'Não informado',
-                velocidadeMaxima: 'Não informado'
-            }
+                cor: v.veiculo_cor || 'Não informado',
+                portas: v.veiculo_portas ? `${v.veiculo_portas} portas` : 'Não informado',
+                blindado: v.veiculo_blindado === '1' || v.veiculo_blindado === true ? 'Sim' : 'Não',
+                combustivel: v.veiculo_combustivel || 'Não informado'
+            },
+            opcionais: Array.isArray(v.opcionais) ? v.opcionais : []
         };
     }
 

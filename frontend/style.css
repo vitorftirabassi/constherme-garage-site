@@ -1370,6 +1370,30 @@ header.menu-open {
     text-align: right;
 }
 
+/* === EQUIPAMENTOS E OPCIONAIS === */
+.lista-opcionais {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag-opcional {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #222;
+    border-radius: 20px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.tag-opcional i {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
 /* === PÁGINA DE CONSIGNAÇÃO E FORMULÁRIOS === */
 .page-header-consignacao {
     /* Pode trocar a imagem de fundo por uma foto do showroom da Constherme */
@@ -2120,5 +2144,131 @@ main.admin-page {
 
     .form-row-split {
         grid-template-columns: 1fr;
+    }
+}
+
+/* === AJUSTES PARA SMARTPHONES === */
+@media (max-width: 767px) {
+    .container {
+        width: calc(100% - 32px);
+    }
+
+    .logo {
+        min-width: 0;
+        gap: 6px;
+    }
+
+    .logo img {
+        height: 48px;
+    }
+
+    .logo h2 {
+        min-width: 0;
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .logo h2 span {
+        font-size: 0.8rem;
+    }
+
+    /* Evita que o título e o preço criem uma largura maior que a tela. */
+    .cabecalho-veiculo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .cabecalho-veiculo h1 {
+        max-width: 100%;
+        font-size: 1.65rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .cabecalho-veiculo .versao {
+        display: block;
+        max-width: 100%;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .cabecalho-veiculo .preco-destaque {
+        font-size: 1.85rem;
+        line-height: 1.2;
+    }
+
+    .galeria-principal img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .ficha-tecnica-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .item-ficha {
+        min-width: 0;
+    }
+
+    .item-ficha div {
+        min-width: 0;
+    }
+
+    .item-ficha div strong {
+        overflow-wrap: anywhere;
+    }
+
+    .secao-especificacoes {
+        margin-top: 36px;
+    }
+
+    .lista-especificacoes li {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+        padding: 13px 0;
+    }
+
+    .lista-especificacoes li strong {
+        width: 100%;
+        text-align: left;
+        overflow-wrap: anywhere;
+    }
+
+    .form-container,
+    .passos-container {
+        padding: 24px 18px;
+    }
+
+    .form-container h3,
+    .passos-container h3 {
+        font-size: 1.45rem;
+    }
+
+    .input-block input,
+    .input-block textarea,
+    .select-padrao {
+        font-size: 16px;
+    }
+
+    .page-header-financiamento h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+
+    .page-header-financiamento p {
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+        line-height: 1.5;
+    }
+
+    .grid-parceiros {
+        gap: 12px;
     }
 }
