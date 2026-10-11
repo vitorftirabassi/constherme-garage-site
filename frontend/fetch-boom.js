@@ -3,6 +3,9 @@
     async function normalizeVehicle(v) {
         const firstGallery = Array.isArray(v.galeria) ? v.galeria.find(item => item && (item.url_imagem || item.veiculo_galeria_url)) : null;
         const galleryImage = firstGallery ? (firstGallery.url_imagem || `https://arquivos.boomsistemas.com.br/veiculos/${firstGallery.veiculo_galeria_url}`) : null;
+        const galleryPhotos = Array.isArray(v.fotosUrls) && v.fotosUrls.length
+            ? v.fotosUrls
+            : (Array.isArray(v.galeria) ? v.galeria.map(item => item && (item.url_imagem || (item.veiculo_galeria_url ? `https://arquivos.boomsistemas.com.br/veiculos/${item.veiculo_galeria_url}` : null))).filter(Boolean) : []);
         const kmValue = v.km || v.kilometragem || v.veiculo_km || v.KM;
         const priceValue = v.preco || v.price || v.preco_venda || v.Price || v.veiculo_valor || v.veiculo_valor_venda || v.valor;
         const numericPrice = Number(String(priceValue || '').replace(',', '.'));
@@ -24,6 +27,7 @@
             cambio: v.cambio || v.transmission || v.Cambio || v.veiculo_cambio || '',
             preco: normalizedPrice,
             foto: v.fotoUrl || galleryImage || v.foto || v.image || v.photo || v.imagem || 'imagens/img_carros/default.jpg',
+            fotos: galleryPhotos,
             tags: v.tags || v.tags_list || (v.veiculo_zerokm === '1' ? ['Zero km'] : []),
             especificacoes: v.especificacoes || {
                 motor: v.veiculo_motor || 'Não informado',

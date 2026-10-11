@@ -421,6 +421,8 @@ function carregarDetalhesVeiculo() {
         `;
     }
 
+    const fotosVeiculo = Array.isArray(carro.fotos) && carro.fotos.length ? carro.fotos : [carro.foto];
+
     container.innerHTML = `
         <div class="container layout-detalhes">
             <div class="info-principal">
@@ -433,7 +435,8 @@ function carregarDetalhesVeiculo() {
                 </div>
 
                 <div class="galeria-principal">
-                    <img src="${carro.foto}" alt="${carro.modelo}" style="width: 100%; border-radius: var(--border-radius); box-shadow: 0 15px 30px rgba(0,0,0,0.5);">
+                    <img id="galeria-foto-principal" src="${fotosVeiculo[0]}" alt="${carro.modelo}" class="galeria-foto-clicavel" title="Clique para ampliar">
+                    ${fotosVeiculo.length > 1 ? `<div class="galeria-miniaturas">${fotosVeiculo.map((url, i) => `<img src="${url}" alt="Foto ${i + 1} de ${fotosVeiculo.length}" data-indice="${i}" loading="lazy" class="${i === 0 ? 'ativa' : ''}">`).join('')}</div>` : ''}
                 </div>
 
                 <h3>Visão Geral</h3>
@@ -478,6 +481,68 @@ function carregarDetalhesVeiculo() {
             </aside>
         </div>
     `;
+
+    iniciarGaleriaVeiculo(fotosVeiculo);
+}
+
+// Galeria da página do veículo: miniaturas trocam a foto principal e o clique abre um visualizador em tela cheia.
+function iniciarGaleriaVeiculo(fotos) {
+    const principal = document.getElementById('galeria-foto-principal');
+    if (!principal) return;
+
+    let indice = 0;
+    let viewer = null;
+
+    const mostrar = (novoIndice) => {
+        indice = (novoIndice + fotos.length) % fotos.length;
+        principal.src = fotos[indice];
+        document.querySelectorAll('.galeria-miniaturas img').forEach((img, i) => img.classList.toggle('ativa', i === indice));
+        if (viewer) {
+            viewer.querySelector('img').src = fotos[indice];
+            viewer.querySelector('.viewer-contador').textContent = `${indice + 1} / ${fotos.length}`;
+        }
+    };
+
+    const fechar = () => {
+        if (!viewer) return;
+        viewer.remove();
+        viewer = null;
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', aoTeclar);
+    };
+
+    function aoTeclar(e) {
+        if (e.key === 'Escape') fechar();
+        else if (e.key === 'ArrowRight') mostrar(indice + 1);
+        else if (e.key === 'ArrowLeft') mostrar(indice - 1);
+    }
+
+    const abrir = () => {
+        if (viewer) return;
+        const varias = fotos.length > 1;
+        viewer = document.createElement('div');
+        viewer.className = 'foto-viewer';
+        viewer.innerHTML = `
+            <button type="button" class="viewer-fechar" aria-label="Fechar">&times;</button>
+            ${varias ? '<button type="button" class="viewer-nav viewer-anterior" aria-label="Foto anterior">&#10094;</button>' : ''}
+            <img src="${fotos[indice]}" alt="Foto ampliada do veículo">
+            ${varias ? '<button type="button" class="viewer-nav viewer-proxima" aria-label="Próxima foto">&#10095;</button>' : ''}
+            <span class="viewer-contador">${indice + 1} / ${fotos.length}</span>
+        `;
+        viewer.addEventListener('click', (e) => {
+            if (e.target.closest('.viewer-anterior')) mostrar(indice - 1);
+            else if (e.target.closest('.viewer-proxima')) mostrar(indice + 1);
+            else if (e.target.tagName !== 'IMG') fechar();
+        });
+        document.body.appendChild(viewer);
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', aoTeclar);
+    };
+
+    principal.addEventListener('click', abrir);
+    document.querySelectorAll('.galeria-miniaturas img').forEach(img => {
+        img.addEventListener('click', () => mostrar(Number(img.dataset.indice)));
+    });
 }
 
 // 8. Lógica do Formulário de Consignação
