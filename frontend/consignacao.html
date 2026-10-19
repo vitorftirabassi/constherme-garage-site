@@ -61,29 +61,50 @@
                             <label for="consignacao-marca">Marca do Veículo</label>
                             <select id="consignacao-marca" class="select-padrao" required>
                                 <option value="" disabled selected>Selecione a Marca</option>
-                                <option value="Fiat">Fiat</option>
-                                <option value="Volkswagen">Volkswagen</option>
+                                <option value="Audi">Audi</option>
                                 <option value="BMW">BMW</option>
+                                <option value="BYD">BYD</option>
+                                <option value="Caoa Chery">Caoa Chery</option>
+                                <option value="Chevrolet">Chevrolet</option>
+                                <option value="Citroën">Citroën</option>
+                                <option value="Fiat">Fiat</option>
+                                <option value="Ford">Ford</option>
+                                <option value="GWM">GWM</option>
+                                <option value="Honda">Honda</option>
+                                <option value="Hyundai">Hyundai</option>
+                                <option value="Jaguar">Jaguar</option>
+                                <option value="Jeep">Jeep</option>
+                                <option value="Kia">Kia</option>
+                                <option value="Land Rover">Land Rover</option>
+                                <option value="Lexus">Lexus</option>
+                                <option value="Mercedes-Benz">Mercedes-Benz</option>
+                                <option value="MINI">MINI</option>
+                                <option value="Mitsubishi">Mitsubishi</option>
+                                <option value="Nissan">Nissan</option>
+                                <option value="Peugeot">Peugeot</option>
+                                <option value="Porsche">Porsche</option>
+                                <option value="RAM">RAM</option>
+                                <option value="Renault">Renault</option>
+                                <option value="Subaru">Subaru</option>
+                                <option value="Suzuki">Suzuki</option>
+                                <option value="Toyota">Toyota</option>
+                                <option value="Troller">Troller</option>
+                                <option value="Volkswagen">Volkswagen</option>
+                                <option value="Volvo">Volvo</option>
                                 <option value="Outra">Outra Marca</option>
                             </select>
                         </div>
-                     
-                        <div class="input-block custom-dropdown-container">
-                            <label>Modelo e Versão</label>
-                            <input type="hidden" id="consignacao-modelo-hidden" required>
-                            
-                            <div class="custom-select disabled" id="custom-modelo-select">
-                                <div class="select-selected">Escolha a Marca primeiro</div>
-                                <div class="select-items select-hide" id="lista-modelos-dropdown">
-                                    </div>
-                            </div>
+
+                        <div class="input-block">
+                            <label for="consignacao-modelo">Modelo e Versão</label>
+                            <input type="text" id="consignacao-modelo" placeholder="Ex: Corolla XEi 2.0 Flex" required>
                         </div>
                     </div>
 
                     <div class="form-group-duplo mt-3">
-                        <div class="input-block" id="container-outro-modelo" style="display: none;">
-                            <label for="consignacao-outro-modelo">Qual é o modelo/versão?</label>
-                            <input type="text" id="consignacao-outro-modelo" placeholder="Ex: Fusca 1500">
+                        <div class="input-block" id="container-outra-marca" style="display: none;">
+                            <label for="consignacao-outra-marca">Qual é a marca?</label>
+                            <input type="text" id="consignacao-outra-marca" placeholder="Ex: Lamborghini">
                         </div>
 
                         <div class="input-block">
